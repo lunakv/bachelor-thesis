@@ -4,7 +4,27 @@
 
 \section{Rozbor STP}
 
+Jedním ze základních podproblémů vyskytujícím se v~takřka všech plánovacích problémech je takzvaný Simple Temporal Problem (STP). STP poprvé postulovali \citet{Dechter91} a~od té doby našel široká využití jak v~informatických oblastech, tak v~oborech od medicíny \citep{Anselma06} po vesmírný let \citep{Fukunaga97}.
+
+Vstupem STP je množina rozdílových omezení, to jest nerovnic tvaru $$x - y \leq c,$$ kde $x$ a~$y$ jsou proměnné a~$c$ je konstanta. V~závislosti na tom, jakou verzi problému řešíme, pracujeme buď s~celočíselnými, nebo s~reálnými hodnotami. Výstupem tohoto problému je pak rozhodnutí, zda existuje ohodnocení proměnných tak, aby byla splněna všechna zadaná omezení. V~rozšíření problému pak můžeme požadovat na výstupu i~nějaké takovéto splnitelné ohodnocení, pokud existuje, případně nalezení pokud možno co nejmenší podmnožiny omezení, která zajišťují nesplnitelnost problému.
+
+Na první pohled se může zdát pevně daný tvar nerovnic příliš omezující, uvědomme si však, že do této formy můžeme převést několik dalších druhů nerovnic. Nejsnáze zahrneme do problému omezení tvaru $x - y = c$; ty stačí jednoduše nahradit nerovnicemi $x - y \leq c$ a~$x - y \geq c$.
+
+Problémy nedělají ani nerovnice typu $\pm x \leq c$. Pro účely takovýchto omezení si zavedeme novou globální proměnnou $zero$, s~jejíž pomocí převedeme předchozí do tvaru $x - zero \leq c$, respektive $zero - x \leq c$. Pokud pak hledáme splňující ohodnocení proměnných, najdeme takové, kde $zero$ je ohodnoceno nulou. Korektnost tohoto postupu zaručuje následující tvrzení.
+
+\begin{lemma}
+	Je-li $\sigma$ splňující ohodnocení nějakého STP a~$\varepsilon$ libovolná konstanta, pak ohodnocení $\pi$ definované pro všechny proměnné $x$ jako $\pi(x) = \sigma(x) + \varepsilon$ je také splňující ohodnocení tohoto STP.
+\end{lemma}
+\begin{proof}
+	Plyne okamžitě z~tvaru rozdílových omezení.
+\end{proof}
+
+Můžeme do problému zahrnout taktéž omezení tvaru $x - y < c$. Pro celočíselné proměnné lze tuto nerovnici ekvivalentně zapsat jako $x - y \leq c-1$. V~reálné variantě pak nahradíme nerovnici výrazem $x - y \leq c - \delta$, přičemž nenastavujeme okamžitě konkrétní hodnotu $\delta$, ale udržujeme si ji pouze symbolicky a~určujeme její vhodné dosazení až při výpočtu splňujícího ohodnocení. Tento postup je detailněji popsán v~sekci \ref{int_v_real}. Uvědomme si, že pokud jsme schopni vyjádřit ostré nerovnosti, umíme vyjádřit i~negace neostrých nerovností a~naopak.
+
+V~jazyce výrokové logiky pak teorii obsahující výše popsané nerovnice nazveme \emph{teorie diferenciální logiky} a~budeme ji značit $DL$. Celočíselnou variantu této teorie pak budeme značit jako $IDL$ a~reálnou variantu jako $RDL$. Nahradíme-li pak v~booleovské formuli některé termy těmito nerovnicemi, ověření splnitelnosti takto vzniklé formule je instancí SMT problému s~ohledem na $DL$.
+
 \section{Převod na grafový problém}
+
 
 \section{Volba algoritmu}
 

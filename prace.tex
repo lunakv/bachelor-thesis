@@ -28,11 +28,13 @@
 %% Vytváříme PDF/A-2u
 \usepackage[a-2u]{pdfx}
 
-%% Přepneme na českou sazbu a fonty Latin Modern
+%% Přepneme na českou sazbu a fonty Libertine
 \usepackage[czech]{babel}
-\usepackage{lmodern}
 \usepackage[T1]{fontenc}
+\usepackage{libertine}
+\usepackage{libertinust1math}
 \usepackage{textcomp}
+%\usepackage{microtype}
 
 %% Použité kódování znaků: obvykle latin2, cp1250 nebo utf8:
 \usepackage[utf8]{inputenc}
@@ -73,7 +75,7 @@
 
 % Název katedry nebo ústavu, kde byla práce oficiálně zadána
 % (dle Organizační struktury MFF UK, případně plný název pracoviště mimo MFF)
-\def\Katedra{Katedra distribuovaných a spolehlivých systémů}
+\def\Katedra{Katedra distribuovaných a~spolehlivých systémů}
 \def\KatedraEN{Department of distributed and dependable systems}
 
 % Jedná se o katedru (department) nebo o ústav (institute)?
@@ -81,10 +83,10 @@
 \def\TypPracovisteEN{Department}
 
 % Vedoucí práce: Jméno a příjmení s~tituly
-\def\Vedouci{doc. RNDr. Jan Kofroň, Ph.D.}
+\def\Vedouci{doc.~RNDr.~Jan Kofroň,~Ph.D.}
 
 % Pracoviště vedoucího (opět dle Organizační struktury MFF)
-\def\KatedraVedouciho{Katedra distribuovaných a spolehlivých systémů}
+\def\KatedraVedouciho{Katedra distribuovaných a~spolehlivých systémů}
 \def\KatedraVedoucihoEN{Department of distributed and dependable systems}
 
 % Studijní program a obor
