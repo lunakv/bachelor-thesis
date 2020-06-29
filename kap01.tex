@@ -4,11 +4,11 @@
 
 \section{Rozbor STP}
 
-Jedním ze základních podproblémů vyskytujícím se v~takřka všech plánovacích problémech je takzvaný Simple Temporal Problem (STP). STP poprvé postulovali \citet*{Dechter91} a~od té doby našel široká využití jak v~informatických oblastech, tak v~oborech od medicíny \citep{Anselma06} po vesmírný let \citep{Fukunaga97}.
+Jedním ze základních podproblémů vyskytujícím se v~takřka všech plánovacích problémech je takzvaný Simple Temporal Problem (STP). STP poprvé postulovali v~roce 1991 Dechter, Meiri a Pearl \cite{Dechter91} a~od té doby našel široká využití jak v~informatických oblastech, tak v~oborech od medicíny \cite{Anselma06} po vesmírný let \cite{Fukunaga97}.
 
 Vstupem STP je množina rozdílových omezení, to jest nerovnic tvaru $$x - y \leq c,$$ kde $x$ a~$y$ jsou proměnné a~$c$ je konstanta. V~závislosti na tom, jakou verzi problému řešíme, přitom pracujeme buď s~celočíselnými, nebo s~reálnými hodnotami. Výstupem tohoto problému je pak rozhodnutí, zda existuje ohodnocení proměnných tak, aby byla splněna všechna zadaná omezení. V~rozšíření problému pak můžeme požadovat na výstupu i~nějaké takovéto splnitelné ohodnocení, pokud existuje, případně nalezení pokud možno co nejmenší podmnožiny omezení, která zajišťuje nesplnitelnost problému.
 
-Na první pohled se může zdát pevně daný tvar nerovnic příliš omezující, uvědomme si však, že do této formy můžeme převést několik dalších druhů nerovnic. Nejsnáze zahrneme do problému omezení tvaru $x - y = c\,$; ty stačí jednoduše nahradit nerovnicemi $x - y \leq c$ a~$x - y \geq c$.
+Na první pohled se může zdát pevně daný tvar nerovnic příliš omezující, uvědomme si však, že do této formy můžeme převést několik dalších druhů nerovnic. Nejsnáze zahrneme do problému omezení tvaru $x - y = c$; ty stačí jednoduše nahradit nerovnicemi $x - y \leq c$ a~$x - y \geq c$.
 
 Problémy nedělají ani nerovnice typu $\pm x \leq c$. Pro účely takovýchto omezení si zavedeme novou globální proměnnou $zero$, s~jejíž pomocí převedeme předchozí do tvaru $x - zero \leq c$, respektive $zero - x \leq c$. Pokud pak hledáme splňující ohodnocení proměnných, najdeme takové, kde $zero$ je ohodnoceno nulou. Korektnost tohoto postupu zaručuje následující tvrzení.
 
@@ -27,7 +27,7 @@ V~jazyce výrokové logiky pak teorii obsahující výše popsané nerovnice naz
 
 \section{Převod na grafový problém}
 
-Velkou rozšířenost STP můžeme mimo jiné přisoudit tomu, že jsme schopni ho efektivně řešit. Jelikož se problém skládá výlučně z~lineárních omezení, mohli bychom na první pohled využít metod lineárního programování, jako je například simplexový algoritmus. Tyto metody jsou schopny řešit i~mnohem komplexnější problémy, avšak s~jejich výpočetní silou se pojí znatelně vyšší časová náročnost. Algoritmy specializované na STP se proto už od svého počátku \citep[Kapitola 2]{Dechter91} obracejí jiným směrem, a~to k~formalizmu teorie grafů. Přestože v~průběhu let vzikly různé metody řešení tohoto problému, všechny fungují na základě převedení množiny omezení na takzvaný \emph{omezující graf}.
+Velkou rozšířenost STP můžeme mimo jiné přisoudit tomu, že jsme schopni ho efektivně řešit. Jelikož se problém skládá výlučně z~lineárních omezení, mohli bychom na první pohled využít metod lineárního programování, jako je například simplexový algoritmus. Tyto metody jsou schopny řešit i~mnohem komplexnější problémy, avšak s~jejich výpočetní silou se pojí znatelně vyšší časová náročnost. Algoritmy specializované na STP se proto už od svého počátku \cite[Kapitola 2]{Dechter91} obracejí jiným směrem, a~to k~formalizmu teorie grafů. Přestože v~průběhu let vzikly různé metody řešení tohoto problému, všechny fungují na základě převedení množiny omezení na takzvaný \emph{omezující graf}.
 
 \begin{definice}[Omezující graf]
 	Nechť $\Pi$ je množina rozdílových omezení. Omezujícím grafem této množiny rozumíme hranově ohodnocený orientovaný graf G takový, že vrcholy G tvoří proměnné vyskytující se v~$\Pi$ a~každému omezení $(x-y \leq c) \in \Pi$ odpovídá v~G hrana $\langle x,y\rangle$ s~ohodnocením $c$.
