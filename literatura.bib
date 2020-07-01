@@ -13,7 +13,7 @@
 %  ===========================================================================
 
 @article{Anselma06,
-	Abstract = {Summary Objective In this paper, we define a principled approach to represent temporal constraints in clinical guidelines and to reason (i.e., perform inferences in the form of constraint propagation) on them. We consider different types of constraints, including composite and repeated actions, and propose different types of temporal functionalities (e.g., temporal consistency checking).},
+	Abstract = {In this paper, we define a principled approach to represent temporal constraints in clinical guidelines and to reason (i.e., perform inferences in the form of constraint propagation) on them. We consider different types of constraints, including composite and repeated actions, and propose different types of temporal functionalities (e.g., temporal consistency checking).},
 	Author = {Anselma, Luca and Terenziani, Paolo and Montani, Stefania and Bottrighi, Alessio},
 	ISSN = {0933-3657},
 	Journal = {Artificial Intelligence In Medicine},
@@ -46,4 +46,90 @@
 	Title = {Temporal constraint networks.},
 	Volume = {49},
 	Year = {1991},
+}
+
+@article{Gazinger04,
+Abstract = {The logic of equality with uninterpreted functions (EUF) and its extensions have been widely applied to processor verification, by means of a large variety of progressively more sophisticated (lazy or eager) translations into propositional SAT. Here we propose a new approach, namely a general DPLL(X) engine, whose parameter X can be instantiated with a specialized solver Solver T for a given theory T, thus producing a system DPLL(T). We describe this DPLL(T) scheme, the interface between DPLL(X) and Solver T , the architecture of DPLL(X), and our solver for EUF, which includes incremental and backtrackable congruence closure algorithms for dealing with the built-in equality and the integer successor and predecessor symbols. Experiments with a first implementation indicate that our technique already outperforms the previous methods on most benchmarks, and scales up very well.},
+Author = {Harald, Ganzinger and George, Hagen and Robert, Nieuwenhuis and Albert, Oliveras and Cesare, Tinelli},
+ISSN = {978-3-540-27813-9},
+Journal = {Computer Aided Verification : 16th International Conference, CAV 2004, Boston, MA, USA, July 13-17, 2004. Proceedings},
+Keywords = {Computer Science, Theory of Computation, Software Engineering, Logic Design, Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Artificial Intelligence (incl. Robotics)},
+Pages = {175},
+Title = {DPLL(T): Fast Decision Procedures.},
+Year = {2004},
+}
+
+@article{Davis60,
+author = {Davis, Martin and Putnam, Hilary},
+title = {A Computing Procedure for Quantification Theory},
+year = {1960},
+issue_date = {July 1960},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {7},
+number = {3},
+issn = {0004-5411},
+url = {https://doi.org/10.1145/321033.321034},
+doi = {10.1145/321033.321034},
+journal = {J. ACM},
+month = jul,
+pages = {201–215},
+numpages = {15}
+}
+  
+@inproceedings{Cook71,
+author = {Cook, Stephen A.},
+title = {The Complexity of Theorem-Proving Procedures},
+year = {1971},
+isbn = {9781450374644},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/800157.805047},
+doi = {10.1145/800157.805047},
+booktitle = {Proceedings of the Third Annual ACM Symposium on Theory of Computing},
+pages = {151–158},
+numpages = {8},
+location = {Shaker Heights, Ohio, USA},
+series = {STOC ’71}
+}
+
+@book{Mares17,
+author = {Mareš, M. and Valla, T},
+title = {Průvodce labyrintem algoritmů},
+year = {2017},
+publisher = {CZ.NIC},
+isbn = {978-80-88168-19-5}
+}
+
+
+@article{Randal02,
+Abstract = {In this paper, we present the logic of Counter Arithmetic with Lambda Expressions and Uninterpreted Functions (CLU). CLU generalizes the logic of equality with uninterpreted functions (EUF) with constrained lambda expressions, ordering, and successor and predecessor functions. In addition to modeling pipelined processors that EUF has proved useful for, CLU can be used to model many infinite-state systems including those with infinite memories, finite and infinite queues including lossy channels, and networks of identical processes. Even with this richer expressive power, the validity of a CLU formula can be efficiently decided by translating it to a propositional formula, and then using Boolean methods to check validity. We give theoretical and empirical evidence for the efficiency of our decision procedure. We also describe verification techniques that we have used on a variety of systems, including an out-of-order execution unit and the load-store unit of an industrial microprocesso},
+Author = {Randal E., Bryant and Shuvendu K., Lahiri and Sanjit A., Seshia},
+ISSN = {978-3-540-45657-5},
+Journal = {Computer Aided Verification : 14th International Conference, CAV 2002 Copenhagen, Denmark, July 27–31, 2002 Proceedings},
+Keywords = {Computer Science, Theory of Computation, Logics and Meanings of Programs, Software Engineering, Mathematical Logic and Formal Languages, Artificial Intelligence (incl. Robotics), Special Purpose and Application-Based Systems},
+Pages = {78},
+Title = {Modeling and Verifying Systems Using a Logic of Counter Arithmetic with Lambda Expressions and Uninterpreted Functions.},
+Year = {2002},
+}
+
+@inbook{Etessami05,
+Abstract = {At CAV'04 we presented the DPLL(T) approach for satisfiability modulo theories T. It is based on a general DPLL(X) engine whose X can be instantiated with different theory solvers SolverT for conjunctions of literals. Here we go one important step further: we require SolverT to be able to detect all input literals that are T-consequences of the partial model that is being explored by DPLL(X). Although at first sight this may seem too expensive, we show that for difference logic the benefits compensate by far the costs. Here we describe and discuss this new version of DPLL(T), the DPLL(X) engine, and our SolverT for difference logic. The resulting very simple DPLL(T) system importantly outperforms the existing techniques for this logic. Moreover, it has very good scaling properties: especially on the larger problems it gives improvements of orders of magnitude w.r.t. the existing state-of-the-art tools. [ABSTRACT FROM AUTHOR]},
+Author = {Etessami, Kousha and Rajamani, Sriram K. and Nieuwenhuis, Robert and Oliveras, Albert},
+Booktitle = {Computer Aided Verification (9783540272311)},
+ISBN = {9783540272311},
+Pages = {321},
+Title = {DPLL(T) with Exhaustive Theory Propagation and Its Application to Difference Logic.},
+Year = {2005}
+}
+
+@article{Moura04,
+Abstract = {There is a large variety of algorithms for ground decision procedures, but their differences, in particular in terms of experimental performance, are not well studied. We compare the behavior of ground decision procedures by comparing the performance of a variety of technologies on benchmark suites with differing characteristics. Based on these experimental results, we discuss relative strengths and shortcomings of different systems.},
+Author = {Moura, Leonardo and Rueß, Harald},
+ISSN = {978-3-540-27813-9},
+Journal = {Computer Aided Verification : 16th International Conference, CAV 2004, Boston, MA, USA, July 13-17, 2004. Proceedings},
+Keywords = {Computer Science, Theory of Computation, Software Engineering, Logic Design, Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Artificial Intelligence (incl. Robotics)},
+Pages = {162},
+Title = {An Experimental Evaluation of Ground Decision Procedures.},
+Year = {2004},
 }
