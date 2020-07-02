@@ -8,7 +8,7 @@ V~praktickém použití však SAT naráží na své limitované vyjadřovací sc
 
 Jak název napovídá, SMT rozšiřuje SAT o~jazyk logických teorií. Máme-li nějakou teorii $T$, pak instancí SMT rozumíme formuli jazyka této teorie. Jiným pohledem můžeme na instanci SMT nahlížet jako na booleovskou formuli, ve které jsme nahradili některé binární proměnné za predikáty obsažené v~$T$. Problému vztaženému k~této konkrétní teorii pak říkáme \emph{SMT s~ohledem na T}.
 
-Jako příklady teorií tradičně řešených v~SMT lze uvézt např. teorii lineární aritmetiky (LA), teorii neinterpretovaných funkcí s~rovností (EUF), či teorii diferenciální logiky (DL), kterou se budeme zabývat ve zbytku práce.
+Jako příklady teorií tradičně řešených v~SMT lze uvézt např. teorii lineární aritmetiky (LA), teorii neinterpretovaných funkcí s~rovností (EUF), či teorii diferenční logiky (DL), kterou se budeme zabývat ve zbytku práce.
 
 Vzhledem k~podobnostem mezi SAT a~SMT není překvapením, že SMT řešiče využívají schopností SAT řešičů. Přechod mezi rozhraním termů teorie a~kapacitami SAT řešiče zpravidla probíhá jedním ze dvou základních způsobů \cite{Etessami05}.
 
@@ -53,7 +53,7 @@ Problematické nejsou ani nerovnice typu $\pm x \leq c$. Pro účely takovýchto
 
 Můžeme do problému zahrnout taktéž omezení tvaru $x - y < c$. Pro celočíselné proměnné lze tuto nerovnici ekvivalentně zapsat jako $x - y \leq c-1$. V~reálné variantě pak nahradíme nerovnici výrazem $x - y \leq c - \delta$, přičemž nenastavujeme okamžitě konkrétní hodnotu $\delta$, ale udržujeme si ji pouze symbolicky a~určujeme její vhodné dosazení až při výpočtu splňujícího ohodnocení. Tento postup je detailněji popsán v~sekci \ref{int_v_real}. Uvědomme si, že pokud jsme schopni vyjádřit ostré nerovnosti, umíme vyjádřit i~negace neostrých nerovností a~naopak.
 
-V~jazyce výrokové logiky pak teorii obsahující výše popsané nerovnice nazveme \emph{teorie diferenciální logiky} a~budeme ji značit \emph{DL}. Celočíselnou variantu této teorie pak budeme značit jako \emph{IDL} a~reálnou variantu jako \emph{RDL}. Nahradíme-li pak v~booleovské formuli některé termy těmito nerovnicemi, ověření splnitelnosti takto vzniklé formule je instancí SMT problému s~ohledem na DL.
+V~jazyce výrokové logiky pak teorii obsahující výše popsané nerovnice nazveme \emph{teorie diferenční logiky} a~budeme ji značit \emph{DL}. Celočíselnou variantu této teorie pak budeme značit jako \emph{IDL} a~reálnou variantu jako \emph{RDL}. Nahradíme-li pak v~booleovské formuli některé termy těmito nerovnicemi, ověření splnitelnosti takto vzniklé formule je instancí SMT problému s~ohledem na DL.
 
 
 
