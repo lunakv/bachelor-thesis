@@ -383,8 +383,8 @@ FUNCTION {format.pages}
 { pages empty$
     { "" }
     { pages multi.page.check
-        { "pages" pages n.dashify tie.or.space.connect }
-        { "page" pages tie.or.space.connect }
+        { "strany" pages n.dashify tie.or.space.connect }       %% changed "pages" to "strany"
+        { "strana" pages tie.or.space.connect }                 %% changed "page" to "strana"
       if$
     }
   if$

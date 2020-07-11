@@ -15,4 +15,4 @@ abstrakt.pdf: abstrakt.tex abstrakt.xmpdata
 
 clean:
 	rm -f *.log *.dvi *.aux *.toc *.lof *.lot *.out *.bbl *.blg *.xmpi
-	#rm -f prace.pdf abstrakt.pdf
+	rm -f pdf/*
