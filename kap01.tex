@@ -42,11 +42,11 @@ Vstupem STP je množina rozdílových omezení, to jest nerovnic tvaru $$x - y \
 
 Na první pohled se může zdát pevně daný tvar nerovnic příliš omezující, uvědomme si však, že do této formy můžeme převést několik dalších druhů nerovnic. Nejsnáze zahrneme do problému omezení tvaru $x - y = c$; ty stačí jednoduše nahradit nerovnicemi $x - y \leq c$ a~$x - y \geq c$.
 
-Problematické nejsou ani nerovnice typu $\pm x \leq c$. Pro účely takovýchto omezení si zavedeme novou globální proměnnou $zero$, s~jejíž pomocí převedeme předchozí do tvaru $x - zero \leq c$, respektive $zero - x \leq c$. Pokud pak hledáme splňující ohodnocení proměnných, najdeme takové, kde $zero$ je ohodnoceno nulou. Korektnost tohoto postupu zaručuje následující tvrzení.
+Problematické nejsou ani nerovnice typu $\pm x \leq c$. Pro účely takovýchto omezení si zavedeme novou globální proměnnou $zero$, s~jejíž pomocí převedeme předchozí do tvaru $x - zero \leq c$, respektive $zero - x \leq c$. Pokud pak hledáme splňující ohodnocení proměnných, najdeme takové, kde $zero$ je ohodnoceno nulou. Korektnost tohoto postupu zaručuje následující zjevnétvrzení.
 
-\begin{lemma}
+\begin{tvrz}
 	Je-li $\sigma$ splňující ohodnocení nějakého STP a~$\varepsilon$ libovolná konstanta, pak ohodnocení $\pi$ definované pro všechny proměnné $x$ jako $\pi(x) = \sigma(x) + \varepsilon$ je také splňující ohodnocení tohoto STP.
-\end{lemma}
+\end{tvrz}
 \begin{proof}
 	Plyne okamžitě z~tvaru rozdílových omezení.
 \end{proof}
@@ -72,7 +72,7 @@ Pro úplnost dodejme, že dvojice proměnných se může vyskytovat v~libovolně
 
 Převod do formy grafu je pro řešení problému zásadní. Umožňuje nám totiž formulovat následující klíčové tvrzení.
 
-\begin{tvrz}
+\begin{tvrz}[Dechter a~kol. \cite{Dechter91}]
 	Nechť $\Pi$ je množina rozdílových omezení. Instance STP tvořená touto množinou je splnitelná právě tehdy, když omezující graf $\Pi$ neobsahuje záporné cykly.
 \end{tvrz}
 \begin{proof}
