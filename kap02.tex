@@ -1,5 +1,7 @@
 \chapter{Popis řešení}
 
+% TODO: Chapter introduction
+
 \section{Prostředí}
 
 Požadavky na použité prostředí jsou určeny převážně požadavky frameworku OpenSMT, pod nějž tato práce spadá. OpenSMT --- a~tudíž i~tento projekt --- je programován v~jazyce C++, konkrétně ve verzi C++11. Práce byla vyvíjena a~testována na operačním systému s~linuxovým jádrem nad architekturou x64. Jelikož si nejsme vědomi toho, že bychom použili vlastnosti jazyka specifické pro tuto konfiguraci, věříme, že náš kód bude možné bez větších potíží zprovoznit i~na jiných platformách a~operačních systémech.
@@ -52,4 +54,17 @@ Jakmile se řešič vrátí do konzistentního stavu, tento proces se opakuje, d
 
 \section{Srovnání reálné a~celočíselné verze} \label{int_v_real}
 
+Algoritmus uvedený v~sekci \ref{alg} je s~drobnými úpravami použitelný jak pro RDL, tak pro IDL. Přestože v~této práci implementujeme pouze celočíselnou verzi problému, přišlo nám názorné zamyslet se nad rozdíly mezi oběma variantami.
+
+Uveďme nejprve pro zajímavost, že pokud na vstupu podporujeme i~rovnice a~jejich negace, ověření konzistence je možné v~reálných číslech provést polynomiálně, zatímco pro celožíselný obor je ověření NP-těžké --- jsme schopni na něj převést např. problém $k$-barevnosti grafu \cite{slides}.
+
+Prvním zjevným rozdílem pro potřeby naší implementace je reprezentace čísel. Reálná čísla je potřeba reprezentovat jinak, než čísla celá. OpenSMT definuje vlastní datový typ pro reálná čísla nazvaný \mono{FastRational}. V~různých částech kódu jej můžeme najít také pod aliasy \mono{Real} nebo \mono{Number}. Tento typ má několik výhod oproti běžným primitivním typům s~posuvnou desetinnou čárkou. Především se jedná o~typ s~teoreticky neomezenou velikostí. Jelikož využívá struktur větších než jedno procesorové slovo, není limitován kapacitami procesoru. Důsledkem toho je to také typ s~libovolnou přesností. Netrpí tak zaokrouhlovacími chybami a~ztrátou platných číslic u~velkých hodnot jako např. \mono{float} a~\mono{double}.
+
+Samozřejmě bychom mohli \mono{FastRational} použít i~v~celočíselném řešení. Usnadnilo by nám to návrh datových struktur a~umožnilo větší znovupoužitelnost kódu. Testováním se však ukázalo, že aritmetické operace na \mono{FastRational} jsou citelně pomalejší než u~primitivních typů. Náš projekt tak používá primitivní celočíselný typ, konkrétně typ \mono{ptrdiff\_t}. Ten bohužel podporuje pouze hodnoty omezeného rozsahu. Protože ale v~OpenSMT zatím neexistuje ekvivalent \mono{FastRational} pro celá čísla, uznali jsme jej jako nejlepší volbu. Omezení rozsahu se navíc experimentálně ukázalo jako zanedbatelné pro běžné použití --- z~834(?) %TODO find out
+testů knihovny SMT-LIB náš řešič vrátil ve všech případech správný výsledek.
+
+Zásadní algoritmický rozdíl je také v~tvorbě negací. Máme-li například na vstupu nerovnici $(x-y<k)$, v~IDL ji triviálně převedeme do tvaru $(x-y\leq k-1)$. V~RDL se ovšem ostrých nerovností tak snadno nezbavíme. Nieuwenhuis a~Olivieras \cite{Nieuwenhuis05} navrhují pro tento případ postup, který postuloval Schrijver \cite{Schrijver86}. Ten je založen na zápisu nerovnosti jako $(x-y\leq k-\delta)$ pro nějaké dostatečně malé $\delta$, které bude záviset pouze na ostatních přítomných nerovnicích. Hodnotu $\delta$ přitom nepočítáme přímo, ale ukládáme si ji pouze symbolicky. (Tohle vysvětlení bude úplnější, až pořádně pochopím jak to funguje) %TODO
+V~kontextu OpenSMT už je tento přístup použit v~řešiči teorie lineární aritmetiky.
+
+Na závěr ještě připomeňme omezení týkající se datových struktur použitých v~OpenSMT. Jelikož \mono{FastRational} obsahuje ukazatele, nelze jej --- ani typy, které ho obsahují --- použít například jako prvek třídy \mono{vec}. Na tato omezení je třeba dbát při přechodu z~celočíselné verze na reálnou.
 
