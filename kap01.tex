@@ -10,7 +10,7 @@ Jak název napovídá, SMT rozšiřuje SAT o~jazyk logických teorií. Máme-li 
 
 Jako příklady teorií tradičně řešených v~SMT lze uvézt např. teorii lineární aritmetiky (LA), teorii neinterpretovaných funkcí s~rovností (EUF), či teorii diferenční logiky (DL), kterou se budeme zabývat ve zbytku práce.
 
-Vzhledem k~podobnostem mezi SAT a~SMT není překvapením, že SMT řešiče využívají schopností SAT řešičů. Přechod mezi rozhraním termů teorie a~kapacitami SAT řešiče zpravidla probíhá jedním ze dvou základních způsobů \cite{Etessami05}.
+Vzhledem k~podobnostem mezi SAT a~SMT není překvapením, že SMT řešiče využívají schopností SAT řešičů. Přechod mezi rozhraním termů teorie a~kapacitami SAT řešiče zpravidla probíhá jedním ze dvou základních způsobů \cite{Nieuwenhuis05}.
 
 První přístup se nazývá \emph{hladový}. Hladové SMT řešiče operují ve dvou krocích. V~prvním převedou celou vstupní formuli na ekvisplnitelnou booleovskou formuli. Druhý krok pak již spočívá jen v~předání této formule existujícímu SAT řešiči. Pokud bychom tedy pracovali například s~aritmetikou nad osmibitovými čísly, mohli bychom reprezentovat každou proměnnou osmi binárními proměnnými a~aritmetické operace převézt na odpovídající sekvence logických operací.
 
@@ -29,7 +29,7 @@ V~jádru tohoto přístupu stojí všeobecný DPLL($X$) engine, využívající 
 	\item[SetTrue(l: L-literál): množina L-literálů.] Skončí výjimkou, pokud se $l$ ukáže jako nekonzistentní s~dosud zadanými literály teorie. V~opačném případě přidá $l$ do seznamu zadaných literálů a~vrátí množinu L-literálů, které jsou důsledky přidání $l$ do tohoto seznamu.
 	\item[IsTrue?(l: L-literál): boolean.] Vrátí \emph{true} právě tehdy, když $l$ je důsledkem seznamu přidaných literálů. \emph{false} tedy vrací, pokud je důsledkem tohoto seznamu $\neg l$, nebo pokud z~něj nevyplývá ani $l$, ani $\neg l$.
 	\item[Backtrack(n: přir. číslo).] Odstraní posledních $n$ hodnot ze seznamu zadaných literálů. $n$ nesmí být větší než velikost tohoto seznamu.
-	\item[Explain(l: L-literál): množina L-literálů.] Vrátí pokud možno co nejmenší podmnožinu zadaných literálů, z~jejichž konjunkce plyne $l$. Pro $l$ musí platit, že je důsledkem nějaké takové podmnožiny, tedy musí být obsažen v~návratové hodnotě nějakého volání \textbf{SetTrue(l')} takového, že $l'$ nebylo zahozeno žádným následným voláním \textbf{Backtrack}.
+	\item[Explain(l: L-literál): množina L-literálů.] Vrátí pokud možno co nejmenší podmnožinu zadaných literálů, z~jejichž konjunkce plyne $l$. Pro $l$ musí platit, že je důsledkem nějaké takové podmnožiny, tedy musí být obsažen v~návratové hodnotě nějakého volání \icode{SetTrue(l')} takového, že $l'$ nebylo zahozeno žádným následným voláním \icode{Backtrack}.
 \end{description}
 
 Při použití tohoto rozhranní přitom $Solver_T$ nemusí nic vědět o~implementaci DPLL($X$) enginu. Framework je tedy velice modulární a~snadno rozšiřitelný o~nové teorie. Vyžadujeme pouze, aby byl $Solver_T$ schopný inkrementálně přijímat a~odebírat jednotlivé predikáty teorie. Tento postup se v~praxi ukazuje jako efektivnější než dostupné alternativy. Většina dnes rozšířených SMT řešičů --- včetně námi používaného OpenSMT2 --- je tedy založena na metodě DPLL($T$).
@@ -45,7 +45,7 @@ Na první pohled se může zdát pevně daný tvar nerovnic příliš omezujíc�
 Problematické nejsou ani nerovnice typu $\pm x \leq c$. Pro účely takovýchto omezení si zavedeme novou globální proměnnou $zero$, s~jejíž pomocí převedeme předchozí do tvaru $x - zero \leq c$, respektive $zero - x \leq c$. Pokud pak hledáme splňující ohodnocení proměnných, najdeme takové, kde $zero$ je ohodnoceno nulou. Korektnost tohoto postupu zaručuje následující zjevnétvrzení.
 
 \begin{tvrz}
-	Je-li $\sigma$ splňující ohodnocení nějakého STP a~$\varepsilon$ libovolná konstanta, pak ohodnocení $\pi$ definované pro všechny proměnné $x$ jako $\pi(x) = \sigma(x) + \varepsilon$ je také splňující ohodnocení tohoto STP.
+	Je-li $\sigma$ splňující ohodnocení nějakého STP a~$\delta$ libovolná konstanta, pak ohodnocení $\pi$ definované pro všechny proměnné $x$ jako $\pi(x) = \sigma(x) + \delta$ je také splňující ohodnocení tohoto STP.
 \end{tvrz}
 \begin{proof}
 	Plyne okamžitě z~tvaru rozdílových omezení.
@@ -57,7 +57,7 @@ V~jazyce výrokové logiky pak teorii obsahující výše popsané nerovnice naz
 
 
 
-\section{Převod na grafový problém}
+\section{Převod na grafový problém}\label{graf}
 
 Velkou rozšířenost STP můžeme mimo jiné přisoudit tomu, že jsme schopni ho efektivně řešit. Jelikož se problém skládá výlučně z~lineárních omezení, mohli bychom na první pohled využít metod lineárního programování, jako je například simplexový algoritmus. Tyto metody jsou schopny řešit i~mnohem komplexnější problémy, avšak s~jejich výpočetní silou se pojí znatelně vyšší časová náročnost. Algoritmy specializované na STP se proto už od svého počátku \cite[Kapitola 2]{Dechter91} obracejí jiným směrem, a~to k~formalizmu teorie grafů. Přestože v~průběhu let vzikly různé metody řešení tohoto problému, všechny fungují na základě převedení množiny omezení na takzvaný \emph{omezující graf}.
 
@@ -85,20 +85,43 @@ Tyto algoritmy však trpí pro náš účel zásadním nedostatkem. Jejich použ
 
 \section{Volba algoritmu}\label{alg}
 
-%% FIXME: rewrite this whole section, it's bad
+Jak jsme ukázali v~předchozí sekci, ne všechny algoritmy na rozhodnutí STP jsou dobrou volbou pro použití v~kontextu SMT řešičů. Theory solver pro DPLL($T$) by měl efektivně podporovat dvě zásadní operace --- inkrementální přidávání literálů a~backtracking.
 
-%Jak jsme ukázali v~předchozí sekci, ne všechny algoritmy na rozhodnutí STP jsou dobrou volbou pro použití v~kontextu SMT řešičů. Theory solver pro DPLL($T$) by měl efektivně podporovat dvě zásadní operace --- inkrementální přidávání literálů a~backtracking.
+Na rozdíl od základního hladového přístupu, jak byl popsán v~\ref{smt}, v~DPLL($T$) dostává $Solver_T$ informaci o~rozhodnutých ohodnoceních průběžně. Aby byly dříve odhaleny slepé větve v~rozhodovacím stromu, $Solver_T$ je průběžně dotazován na splnitelnost dosud provedených rozhodnutí. Pro zrychlení tohoto procesu je tedy vhodné, aby byl schopen pro výpočet využít výsledků z~předchozích dokončených výpočtů. Algoritmy, které nedokáží takto zakomponovat mezivýpočet podproblému, budou ze své podstaty méně výkonné na postupné sekvenci splnitelných ohodnocení.
 
-%Na rozdíl od základního hladového přístupu, jak byl popsán v~\ref{smt}, v~DPLL($T$) dostává $Solver_T$ informaci o~rozhodnutých ohodnoceních průběžně. Aby byly dříve odhaleny slepé větve v~rozhodovacím stromu, $Solver_T$ je průběžně dotazován na splnitelnost dosud provedených rozhodnutí. Pro zrychlení tohoto procesu je tedy vhodné, aby byl schopen pro výpočet využít výsledků z~předchozích dokončených výpočtů. Algoritmy, které nedokáží takto zakomponovat mezivýpočet podproblému, budou ze své podstaty méně výkonné na postupné sekvenci splnitelných ohodnocení.
+Po nalezení nesplnitelného ohodnocení pak neopakuje engine celý výpočet, ale vrací se pouze do nejbližšího stavu, ve kterém bylo ohodnocení ještě splnitelné. Od theory solveru očekáváme, že je schopen efektivně zapomínat přidané literály, vracet se do předchozích stavů a~pokračovat z~nich ve výpočtu. %% FIXME: Better wording?
+S~ohledem na tyto požadavky vzniklo několik algoritmů pro řešení SMT s~ohledem na DL. V~této práci se budeme zabývat převážně postupem založeným na vyčerpávající propagaci teorie, který postulovali v~roce 2005 Nieuwenhuis a~Oliveras \cite{Nieuwenhuis05}.
 
-%Po nalezení nesplnitelného ohodnocení pak neopakuje engine celý výpočet, ale vrací se pouze do nejbližšího stavu, ve kterém bylo ohodnocení ještě splnitelné. Od theory solveru očekáváme, že je schopen efektivně zapomínat přidané literály, vracet do předchozích stavů a~pokračovat z~nich ve výpočtu. %% FIXME: Better wording?
+\subsection{DPLL($T$) s~vyčerpávající propagací teorie}
 
-%S~ohledem na tyto požadavky vzniklo několik algoritmů pro řešení SMT s~ohledem na DL. V~této práci se budeme zabývat převážně postupem založeným na vyčerpávající propagaci teorie, který postulovali v roce 2005 Nieuwenhuis a Oliveras \cite{Nieuwenhuis05}.
+Připomeňme si metodu \icode{SetTrue} uvedenou v~sekci \ref{smt}. Ta slouží k~přidání nového omezení do kontextu řešiče teorie. Řešič může volitelně jako návratovou hodnotu uvést nějakou množinu literálů, které detekoval jako důsledky vzniklé přidáním právě tohoto omezení. Může přitom hlásit např. jen \uv{zjevné} důsledky, popřípadě nemusí vracet vůbec žádné. Pokud jsme je ale schopni nacházet v~rozumém čase, nahlášené důsledky jsou užitečnou informací pro hlavní engine, poněvadž pro něj mohou výrazně zmenšit velikost rozhodovacího stromu.
 
-%Tento algoritmus je založen na DPLL($T$) frameworku, ovšem přidává k rozhraní popsanému v \ref{smt} důležitou podmínku; $Solver_T$ musí po zavolání \textbf{SetTrue} najít množinu \emph{všech} důsledků právě přidaného literálu. To má za důsledek zjednodušení a zefektivnění DPLL($X$) enginu, který se v podstatě stává běžným SAT řešičem. Jediným rozdílem je pak minimalistické rozhraní se $Solver_T$. Theory solver se od DPLL($X$) dozví pokaždé, když je rozhodnuto o ohodnocení nějakého literálu, na což odpoví s množinou nových $T$-důsledků, nebo když nastane backtracking, kde je mu oznámen počet zapomenutých literálů. 
+Varianta DPLL($T$) s~vyčerpávající propagací teorie přidává pro \icode{SetTrue} silnou podmínku; řešič musí vrátit \emph{všechny} literály ze vstupní formule, které jsou důsledky stávajícího ohodnocení. Tento předpoklad značně zjednoduší DPLL($X$) engine a~umožní mu pracovat efektivněji. Stane se z~něj \emph{de~facto} běžný SAT řešič, který se liší pouze minimalistickým rozhranním se $Solver_T$. To má mimo jiné za důsledek, že jsme nyní schopni převézt libovolný SAT řešič na bázi DPLL do DPLL($X$) enginu.
 
-%Můžeme si představit, že během inicializace si $Solver_T$ přečte vstupní CNF formuli, uloží si seznam všech obsažených literálů a předá DPLL($X$) již čistě booleovskou CNF. 
-%$$
-%\vdots
-%$$
-%K námi vybranému algoritmu existují i alternativy. Jeho předchůdcem je například \emph{TSAT++}
+Nevýhoda tohoto přístupu je jasná. Povinnost hledat všechny důsledky teorie může řádově zpomalit operaci \icode{SetTrue} pro řešič teorie. Nicméně se ukázalo, že alespoň v~případě diferenční logiky může tento přístup vést k~rychlé implementaci schopné předčit ostatní alternativy.
+
+\subsection{Návrh řešiče pro diferenční logiku}
+
+$Solver_T$ diferenční logiky využívá principy, se kterými jsme se podrobněji seznámili v~předchozích sekcích. Můžeme například předpokládat, že všechna omezení jsou tvaru $x-y \leq c$ (viz.~\ref{stp}). Využijeme též převodu omezení do tvaru omezujícího grafu, jak bylo uvedeno v~\ref{graf}.
+
+\subsubsection*{Inicializace}
+Během inicializace načte řešič vstupní formuli, uloží si všechna rozdílová omezení, která se v~ní vyskytují, a~předá ji DPLL($X$) jako čistě booleovskou formuli. Během tohoto procesu by měl detekovat vztahy mezi literály a~jejich negacemi a~explicitně je poznamenat. Pokud se například na vstupu vyskytnou nerovnice $x-y \leq 1$ a~$y-x \leq -2$, v~oboru celých čísel je jedna negací druhé. Řešič by tak měl abstrahovat tyto výskyty jako $p$ a~$\neg p$ pro booleovskou proměnnou $p$. Ukládá si přitom překladovou tabulku pamatující si pro každou nerovnici abstrahovaný literál, kterému odpovídá. Zároveň s~tím si udržuje pro každou proměnnou seznam všech nerovnic, ve kterých se tato proměnná vyskytuje (účel těchto seznamů je objasněn níže).
+
+\subsubsection*{Ohodnocení literálu}
+Jakmile je následně nastavena pravdivostní hodnota některého literálu, převede jej řešič do formy $x-y \leq c$ a~přidá odpovídající hranu do omezujícího grafu. Následně musí objevit všechny důsledky tohoto ohodnocení. Pro jejich nalezení je potřeba zkontrolovat všechny cesty $$x_i \xrightarrow{c_i*} x \xrightarrow{c} y \xrightarrow{c'_j*} y_j$$ a~zjistit, zda nějaké omezení neplyne z~$x_i - y_j \leq (c_i + c + c'_j)$. To budou právě nerovnice tvaru $x_i - y_j \leq c'$, kde $c' \geq c_i + c + c'_j$. 
+
+Abychom prošli všechny tyto cesty, procházející nově přidanou hranou, musíme nejdřív nalézt seznam všech vrcholů $x_i$, ze kterých je dosažitelné $x$, a~seznam všech vrcholů $y_j$, které jsou dosažitelné z~$y$. Omezující graf je tedy reprezentován jako oboustranný seznam sousedů. Potom už můžeme spustit obyčejný algoritmus na hledání nejkratší cesty, kterým získáme všechna vhodná $x_i$ společně s~jejich $c_i$, resp. $y_j$ s~jejich $c'_j$. Autoři pro toto prohledávání doporučují následující postup.
+
+Použijeme běžné prohledávání do hloubky. V~něm si označíme každý vrchol, který jsme navštívili poprvé, společně s~jeho vzdáleností. Navštívíme-li pak již objevený vrchol znovu, pokračujeme v~prohledávání pouze tehdy, když je jeho současná vzdálenost menší než naše uložená vzdálenost. Zároveň si všechny objevené $x_i$ a~$y_j$ ukládáme do dvou odlišných seznamů. Po skončení prohledávání spočteme pro oba seznamy počet všech nerovnic, ve kterých se proměnné v~seznamu vyskytují (tyto nerovnice si pro každou proměnnou pamatujeme z~inicializace).
+
+Vyskytují-li se potom například $x_i$ celkově v~menším počtu proměnných, projdeme pro každé $x_i$ seznam všech nerovnic, ve kterých se vyskytuje, a~zkontrolujeme, zda se nejedná o~důsledek nalezené cesty z~$x_i$ do nějakého $y_j$.
+
+\subsubsection*{Hledání příčin}
+
+Jak víme z~\ref{smt}, řešiče teorie musí implementovat operaci \icode{Explain}, která pro nalezený důsledek vrátí množinu jeho příčin. Tato operace je důležitá pro budování implikačního grafu v~DPLL($X$) a~určení vhodné úrovně backtrackingu při nalezení sporu. Řešič DL popsaný v~\cite{Nieuwenhuis05} tuto operaci provádějí následovně.
+
+Když je do omezujícího grafu přidána $n$-tá hrana, zapamatujeme si k~této hraně její odpovídající $n$. U~nalezených důsledků si pamatujeme $n$ hrany, jejíž přidáním důsledek vznikl. Když pak hledáme vysvětlení hrany $h$ tvaru $x-y \leq c$, spustíme prohledávání z~$x$ do $y$ stejným způsobem jako po přidání hrany. Prohledávání ale pouštíme jen do délky nejvýše $c$ a~jen přes hrany s~číslem vložení nejvýše $n$. Tato omezení zvyšují efektivitu (zmenšujeme prostor k~prohledání) a~zaručují, že nepoužíváme hrany přidané až po důsledku (což by působilo problémy v~implikačním grafu DPLL($X$)). Nalezená cesta tak má délku kratší nebo rovnou $c$ a~sestává se jen z~dříve přidaných hran, z~čehož jasně vidíme, že $h$ je důsledek hran na této cestě.
+
+\subsection{Alternativní řešení}
+
+TODO
