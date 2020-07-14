@@ -12,6 +12,9 @@
 *.cb2
 .*.lb
 
+## PDF output folder
+pdf/
+
 ## Intermediate documents:
 *.dvi
 *.xdv

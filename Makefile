@@ -1,4 +1,3 @@
-export TEXINPUTS=../tex//:
 
 all: prace.pdf abstrakt.pdf
 	mv *.pdf pdf
@@ -16,3 +15,6 @@ abstrakt.pdf: abstrakt.tex abstrakt.xmpdata
 clean:
 	rm -f *.log *.dvi *.aux *.toc *.lof *.lot *.out *.bbl *.blg *.xmpi
 	rm -f pdf/*
+
+check:
+	verapdf --format text -f 2u pdf/prace.pdf
