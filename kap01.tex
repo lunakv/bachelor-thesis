@@ -6,19 +6,19 @@ Problém splnitelnosti booleovské formule, označovaný též zkratkou SAT, pat
 
 V~praktickém použití však SAT naráží na své limitované vyjadřovací schopnosti. Práce s~binárními proměnnými, omezenými pouze na dvě různé hodnoty, může komplikovat převod reálného problému do tvaru booleovské formule. Potřeba užití komplexnějších atomů tak vedla ke zobecnění SAT zvanému \emph{Satisfiability modulo theories} (SMT).
 
-Jak název napovídá, SMT rozšiřuje SAT o~jazyk logických teorií. Máme-li nějakou teorii $T$, pak instancí SMT rozumíme formuli jazyka této teorie. Jiným pohledem můžeme na instanci SMT nahlížet jako na booleovskou formuli, ve které jsme nahradili některé binární proměnné za predikáty obsažené v~$T$. Problému vztaženému k~této konkrétní teorii pak říkáme \emph{SMT s~ohledem na T}.
+Jak název napovídá, SMT rozšiřuje SAT o~jazyk logických teorií (konkrétně teorií predikátové logiky prvního řádu). Máme-li nějakou teorii $T$, pak instancí SMT rozumíme formuli jazyka této teorie. Jiným pohledem můžeme na instanci SMT nahlížet jako na booleovskou formuli, ve které jsme nahradili některé binární proměnné za predikáty obsažené v~$T$. Problému vztaženému k~této konkrétní teorii pak říkáme \emph{SMT s~ohledem na T}.
 
 Jako příklady teorií tradičně řešených v~SMT lze uvézt např. teorii lineární aritmetiky (LA), teorii neinterpretovaných funkcí s~rovností (EUF), či teorii diferenční logiky (DL), kterou se budeme zabývat ve zbytku práce.
 
-Vzhledem k~podobnostem mezi SAT a~SMT není překvapením, že SMT řešiče využívají schopností SAT řešičů. Přechod mezi rozhraním termů teorie a~kapacitami SAT řešiče zpravidla probíhá jedním ze dvou základních způsobů \cite{Nieuwenhuis05}.
+Vzhledem k~podobnostem mezi SAT a~SMT není překvapením, že SMT řešiče využívají schopností SAT řešičů. Přechod mezi rozhraním termů teorie a~SAT řešičem zpravidla probíhá jedním ze dvou základních způsobů \cite{Nieuwenhuis05}.
 
 První přístup se nazývá \emph{hladový}. Hladové SMT řešiče operují ve dvou krocích. V~prvním převedou celou vstupní formuli na ekvisplnitelnou booleovskou formuli. Druhý krok pak již spočívá jen v~předání této formule existujícímu SAT řešiči. Pokud bychom tedy pracovali například s~aritmetikou nad osmibitovými čísly, mohli bychom reprezentovat každou proměnnou osmi binárními proměnnými a~aritmetické operace převézt na odpovídající sekvence logických operací.
 
-Nespornou výhodou hladových řešičů je možnost použití již existujících metod verifikace implementovaných na řešení SAT. Pro některé teorie se také hladové řešiče ukazují být rychlejší než jejich alternativy. Jejich největší problém pak obecně spočívá v~překladu literálů teorie do booleovských formulí. Ten musí být zkonstruován samostatně pro každou teorii, a~navíc může v~závislosti na teorii produkovat formule znatelně delší, než byl původní vstup. Efektivní převody existují např. pro EUF s~omezenou doménou \cite{Randal02}, obecně však hladový přístup není příliš rozšířený.
+Nespornou výhodou hladových řešičů je možnost použití již existujících metod implementovaných na řešení SAT. Pro některé teorie se také hladové řešiče ukazují být rychlejší než jejich alternativy. Jejich největší problém pak obecně spočívá v~překladu literálů teorie do booleovských formulí. Ten musí být zkonstruován samostatně pro každou teorii, a~navíc může v~závislosti na teorii produkovat formule znatelně delší, než byl původní vstup. Efektivní převody existují např. pro EUF s~omezenou doménou \cite{Randal02}, obecně však hladový přístup není příliš rozšířený.
 
-Jeho protějškem je takzvaný \emph{líný přístup}. Líný přístup se nesnaží měnit strukturu vstupní formule; namísto toho je každý predikát abstrahován pomocí nové binární proměnné. Když pak SAT řešič rozhodne o~ohodnocení těchto proměnných, oznámí toto rozhodnutí \emph{theory solveru} pro danou teorii. Theory solver je schopen určit, zda je dané ohodnocení správné, tzn.~dokáže rozhodnout o~splnitelnosti nějaké konjunkce literálů teorie. SAT řešič potom hledá platná ohodnocení, dokud nenajde takové, které theory solver prohlásí za konzistentní.
+Jeho protějškem je takzvaný \emph{líný přístup}. Líný přístup se nesnaží měnit strukturu vstupní formule; namísto toho je každý predikát abstrahován pomocí nové binární proměnné. Když pak SAT řešič rozhodne o~ohodnocení těchto proměnných, oznámí toto rozhodnutí \emph{theory solveru} pro danou teorii. Theory solver je schopen určit, zda je dané ohodnocení konzistentní, tzn.~dokáže rozhodnout o~splnitelnosti nějaké konjunkce literálů teorie. SAT řešič potom hledá platná ohodnocení, dokud nenajde takové, které theory solver prohlásí za konzistentní.
 
-Ve prospěch líných SMT řešičů svědší fakt, že pro danou teorii často existují dobře známé postupy na ověření konjunkce literálů. Pro LA například můžeme využít metod lineárního programování, theory solver pro DL řeší STP (viz.~\ref{stp}) a~podobně. Mohou však ztrácet efektivitu zejména v~důsledku \emph{slepého prohledávání} \cite{Moura04}, kde hlavní řešič rozhoduje o~hodnotě predikátů, aniž by a~priori věděl o~důsledcích těchto ohodnocení v~rámci teorie, což může vést k~nutnosti vyzkoušet velké množství ohodnocení, než je nalezeno nějaké, které je s~teorií konzistentní.
+Ve prospěch líných SMT řešičů svědčí fakt, že pro danou teorii často existují dobře známé postupy na ověření konjunkce literálů. Pro LA například můžeme využít metod lineárního programování, theory solver pro DL řeší STP (viz.~\ref{stp}) a~podobně. Mohou však ztrácet efektivitu zejména v~důsledku \emph{slepého prohledávání} \cite{Moura04}, kde hlavní řešič rozhoduje o~hodnotě predikátů, aniž by a~priori věděl o~důsledcích těchto ohodnocení v~rámci teorie, což může vést k~nutnosti vyzkoušet velké množství ohodnocení, než je nalezeno nějaké, které je s~teorií konzistentní.
 
 V~roce 2004 navrhli Gazinger a~kol. nový přístup zvaný \emph{DPLL(T)} \cite{Gazinger04}. DPLL($T$) má koncepčně blíže k~línému vyhodnocování, integruje však těsněji hlavní řešič s~theory solverem. Místo toho, aby využíval theory solveru až po nalezení nějakého ohodnocení, průběžně mu oznamuje dosavadní rozhodnutí a~periodicky se ho ptá na splnitelnost právě dosazené konjunkce. Theory solver pak kromě kontroly splnitelnosti také oznamuje hlavnímu řešiči důsledky této konjunkce. Tím jsme schopni dříve opustit větve rozhodovacího stromu nekonzistentní s~teorií. 
 
@@ -32,7 +32,7 @@ V~jádru tohoto přístupu stojí všeobecný DPLL($X$) engine, využívající 
 	\item[Explain(l: L-literál): množina L-literálů.] Vrátí pokud možno co nejmenší podmnožinu zadaných literálů, z~jejichž konjunkce plyne $l$. Pro $l$ musí platit, že je důsledkem nějaké takové podmnožiny, tedy musí být obsažen v~návratové hodnotě nějakého volání \icode{SetTrue(l')} takového, že $l'$ nebylo zahozeno žádným následným voláním \icode{Backtrack}.
 \end{description}
 
-Při použití tohoto rozhranní přitom $Solver_T$ nemusí nic vědět o~implementaci DPLL($X$) enginu. Framework je tedy velice modulární a~snadno rozšiřitelný o~nové teorie. Vyžadujeme pouze, aby byl $Solver_T$ schopný inkrementálně přijímat a~odebírat jednotlivé predikáty teorie. Tento postup se v~praxi ukazuje jako efektivnější než dostupné alternativy. Většina dnes rozšířených SMT řešičů --- včetně námi používaného OpenSMT2 --- je tedy založena na metodě DPLL($T$).
+Při použití tohoto rozhranní přitom $Solver_T$ nemusí nic vědět o~implementaci DPLL($X$) enginu. Framework je tedy velice modulární a~snadno rozšiřitelný o~nové teorie. Vyžadujeme pouze, aby byl $Solver_T$ schopný inkrementálně přijímat a~odebírat jednotlivé literály teorie. Tento postup se v~praxi ukazuje jako efektivnější než dostupné alternativy. Většina dnes rozšířených SMT řešičů --- včetně námi používaného OpenSMT2 --- je tedy založena na metodě DPLL($T$).
 
 \section{Rozbor STP}\label{stp}
 
@@ -42,18 +42,18 @@ Vstupem STP je množina rozdílových omezení, to jest nerovnic tvaru $$x - y \
 
 Na první pohled se může zdát pevně daný tvar nerovnic příliš omezující, uvědomme si však, že do této formy můžeme převést několik dalších druhů nerovnic. Nejsnáze zahrneme do problému omezení tvaru $x - y = c$; ty stačí jednoduše nahradit nerovnicemi $x - y \leq c$ a~$x - y \geq c$.
 
-Problematické nejsou ani nerovnice typu $\pm x \leq c$. Pro účely takovýchto omezení si zavedeme novou globální proměnnou $zero$, s~jejíž pomocí převedeme předchozí do tvaru $x - zero \leq c$, respektive $zero - x \leq c$. Pokud pak hledáme splňující ohodnocení proměnných, najdeme takové, kde $zero$ je ohodnoceno nulou. Korektnost tohoto postupu zaručuje následující zjevnétvrzení.
+Problematické nejsou ani nerovnice typu $\pm x \leq c$. Pro účely takovýchto omezení si zavedeme novou globální proměnnou $zero$, s~jejíž pomocí převedeme předchozí do tvaru $x - zero \leq c$, respektive $zero - x \leq c$. Pokud pak hledáme splňující ohodnocení proměnných, najdeme takové, kde $zero$ je ohodnoceno nulou. Korektnost tohoto postupu zaručuje následující obecně známé.
 
 \begin{tvrz}
 	Je-li $\sigma$ splňující ohodnocení nějakého STP a~$\delta$ libovolná konstanta, pak ohodnocení $\pi$ definované pro všechny proměnné $x$ jako $\pi(x) = \sigma(x) + \delta$ je také splňující ohodnocení tohoto STP.
 \end{tvrz}
 \begin{proof}
-	Plyne okamžitě z~tvaru rozdílových omezení.
+	Je-li $\sigma$ splňující ohodnocení, pro libovolné rozdílové omezení $x-y \leq c$ v~problému platí $$\pi(x) - \pi(y) = (\sigma(x) + \delta) - (\sigma(y) + \delta) = \sigma(x) - \sigma(y) \leq c,$$ z~čehož je i~$\pi$ splňující ohodnocení.
 \end{proof}
 
 Můžeme do problému zahrnout taktéž omezení tvaru $x - y < c$. Pro celočíselné proměnné lze tuto nerovnici ekvivalentně zapsat jako $x - y \leq c-1$. V~reálné variantě pak nahradíme nerovnici výrazem $x - y \leq c - \delta$, přičemž nenastavujeme okamžitě konkrétní hodnotu $\delta$, ale udržujeme si ji pouze symbolicky a~určujeme její vhodné dosazení až při výpočtu splňujícího ohodnocení. Tento postup je detailněji popsán v~sekci \ref{int_v_real}. Uvědomme si, že pokud jsme schopni vyjádřit ostré nerovnosti, umíme vyjádřit i~negace neostrých nerovností a~naopak.
 
-V~jazyce výrokové logiky pak teorii obsahující výše popsané nerovnice nazveme \emph{teorie diferenční logiky} a~budeme ji značit \emph{DL}. Celočíselnou variantu této teorie pak budeme značit jako \emph{IDL} a~reálnou variantu jako \emph{RDL}. Nahradíme-li pak v~booleovské formuli některé termy těmito nerovnicemi, ověření splnitelnosti takto vzniklé formule je instancí SMT problému s~ohledem na DL.
+V~jazyce výrokové logiky pak teorii obsahující výše popsané nerovnice nazveme \emph{teorie diferenční logiky} a~budeme ji značit DL. Celočíselnou variantu této teorie pak budeme značit jako IDL a~reálnou variantu jako RDL. Nahradíme-li pak v~booleovské formuli některé termy těmito nerovnicemi, ověření splnitelnosti takto vzniklé formule je instancí SMT problému s~ohledem na DL.
 
 
 
