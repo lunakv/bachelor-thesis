@@ -2,10 +2,6 @@
 
 V~této kapitole rozebereme obecné vlastnosti našeho řešení. Nejprve opodstatníme některá koncepční rozhodnutí, která jsme učinili jako důsledek použitého frameworku. Poté si přiblížíme použité datové struktury, nastíníme obecný způsob fungování programu a~zamyslíme se nad rozdíly mezi různými variantami řešeného problému.
 
-\section{Prostředí}
-
-Požadavky na použité prostředí jsou určeny převážně požadavky frameworku OpenSMT, pod nějž tato práce spadá. OpenSMT --- a~tudíž i~tento projekt --- je programován v~jazyce C++, konkrétně ve verzi C++11. Práce byla vyvíjena a~testována na operačním systému s~linuxovým jádrem nad architekturou x64. Jelikož si nejsme vědomi toho, že bychom použili vlastnosti jazyka specifické pro tuto konfiguraci, věříme, že náš kód bude možné bez větších potíží zprovoznit i~na jiných platformách a~operačních systémech.
-
 \section{Úpravy referenčního algoritmu}\label{upravy}
 
 Naše implementace je převážně založená na algoritmu tak, jak ho postulovali Nieuwenhuis a~Oliveras \cite{Nieuwenhuis05}. Přesto se liší v~některých implementačních detailech, daných zejména odlišnostmi OpenSMT od referenčního DPLL($T$) frameworku. %% TODO finish
