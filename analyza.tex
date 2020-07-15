@@ -62,6 +62,12 @@ Převod do formy grafu je pro řešení problému zásadní. Umožňuje nám tot
 
 Hledání splnitelnosti STP jsme tedy schopni převést na hledání záporného cyklu v~grafu. To je problém, který dokážeme efektivně řešit. Využít můžeme např. některý algoritmus na hledání nejkratší cesty, kupříkladu Floydův-Warshallův algoritmus operující v~čase $\Theta(\abs{V}^3)$ nebo Bellmanův-Fordův algoritmus, který má časovou složitost $\Theta(\abs{V}\cdot\abs{E})$.
 
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{graph_unsat}
+	\caption{Rozhodnutí o nesplnitelnosti STP nalezením záporného cyklu}
+\end{figure}
+
 Tyto algoritmy však trpí pro náš účel zásadním nedostatkem. Jejich použití znamená, že po každém přidání nové hrany do grafu musí znovu proběhnout celé prohledávání. Tento postup není vhodný pro použití v~SMT řešičích, ve kterých je kladen velký důraz na inkrementalitu. V~následující sekci tedy podrobně rozebereme několik postupů pro řešení problémů SMT s~ohledem na DL a~motivujeme výběr námi použitého algoritmu. 
 
 \section{Volba algoritmu}\label{alg}
