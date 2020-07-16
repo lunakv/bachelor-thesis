@@ -50,6 +50,12 @@ Tyto dva přístupy jsou naštěstí ekvivalentní. Když OpenSMT objeví spor, 
 
 \section{Popis běhu programu}
 
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{interface}
+	\caption{Ukázka interakce řešiče s~OpenSMT (pseudokód)}
+\end{figure}
+
 V~první fázi algoritmu jsou řešiči předány všechny literály teorie, které se vyskytují ve vstupní formuli. Řešič z~nich nejprve extrahuje relevantní hodnoty. Následně zkontroluje, zda se nejedná o~negaci některého z~již zapamatovaných literálů. Pokud ano, pouze tuto negaci explicitně označí. V~opačném případě vytvoří hranu odpovídající tomuto literálu a~zároveň a~priori hranu tvořící negaci tohoto literálu, jak je popsáno v~sekci \ref{upravy}. Obě nové hrany se stanou součástí úložiště a~jsou zařazeny do překladových tabulek. Zbytek výpočtu pak již může předpokládat, že pracujeme pouze se známými literály, pro něž máme vytvořené hrany.
 
 Poté, co jsou všechna omezení načtena, nastává hlavní část programu. Během té postupně řešič dostává rozhodnutá ohodnocení literálů. Když nějaké obdrží, přidá do omezujícího grafu hranu odpovídající tomuto ohodnocení. Následně proběhne prohledávání objevující všechny důsledky tohoto ohodnocení. Tyto důsledky jsou přeloženy zpět do formy \icode{PtAsgn} a~oznámeny frameworku.
