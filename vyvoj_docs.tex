@@ -43,6 +43,12 @@ Třídu \icode{STPModel} využijeme, pokud chceme pro splnitelnou množinu nerov
 
 Všechny struktury řešiče spojuje dohromady hlavní třída \icode{STPSolver}. Jakožto potomek \icode{TSolver} implementuje tato třída rozhranní mezi řešičem a~zbytkem frameworku. %% TODO add more.
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\textwidth]{class_deps}
+	\caption{Závislosti mezi strukturami řešiče}
+\end{figure}
+
 Je vhodné zmínit, že za dobu vývoje OpenSMT v~něm vzniklo několik implementací základních datových struktur. Hojně užívaným příkladem je třída \icode{vec}, reprezentující běžný vektor. Vyjma malých rozdílů API a~údajné vyšší efektivity na primitivních typech se tyto třídy výrazně neliší od implementací ze standardní knihovny. Konkrétně třída \icode{vec} je navíc omezena skutečností, že jejími prvky nemohou být typy obsahující odkazy (vyjímkou z~tohoto pravidla je zvlášť implementovaný \icode{vec$\langle$vec$\langle$T$\rangle\rangle$}). Za účelem konzistence se zbytkem frameworku jsme se přesto rozhodli využívat tyto lokální struktury všude, kde je to možné. 
 
 
