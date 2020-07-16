@@ -18,17 +18,17 @@ Ve prospěch líných SMT řešičů svědčí fakt, že pro danou teorii často
 
 V~roce 2004 navrhli Gazinger a~kol. nový přístup zvaný \emph{DPLL(T)} \cite{Gazinger04}. DPLL($T$) má koncepčně blíže k~línému vyhodnocování, integruje však těsněji hlavní řešič s~řešiči teorie. Místo toho, aby využíval řešiče teorie až po nalezení nějakého ohodnocení, průběžně mu oznamuje dosavadní rozhodnutí a~periodicky se ho ptá na splnitelnost právě dosazené konjunkce. Řešič teorie pak kromě kontroly splnitelnosti také oznamuje hlavnímu řešiči důsledky této konjunkce. Tím jsme schopni dříve opustit větve rozhodovacího stromu nekonzistentní s~teorií. 
 
-V~jádru tohoto přístupu stojí všeobecný DPLL($X$) engine, využívající DPLL \cite{Davis60} postupu pro SAT řešiče. Tento engine nemusí mít žádné znalosti o~konkrétní teorii. Dosazením řešiče $Solver_T$ dané teorie $T$ za parametr $X$ pak vytvoříme konkrétní instanci DPLL($T$). Hlavní engine přitom v průběhu výpočtu komunikuje se $Solver_T$.
+V~jádru tohoto přístupu stojí všeobecný DPLL($X$) engine, využívající DPLL \cite{Davis60} postupu pro SAT řešiče. Tento engine nemusí mít žádné znalosti o~konkrétní teorii. Dosazením řešiče $Solver_T$ dané teorie $T$ za parametr $X$ pak vytvoříme konkrétní instanci DPLL($T$). Hlavní engine přitom v~průběhu výpočtu komunikuje se $Solver_T$.
 
-Stejně jako u líných řešičů, v DPLL($T$) abstrahuje $Solver_T$ literály teorie za běžné booleovské proměnné, se kterými může DPLL($X$) pracovat. Než tedy začne samotný výpočet, musí být \emph{Solver$_T$} poskytnuta vstupní formule, aby bylo možné provést tuto transformaci. Jakmile pak engine během výpočtu rozhodne o~pravdivostní hodnotě některého abstrahovaného literálu, okamžitě toto rozhodnutí oznámí řešiči teorie. Ten musí rozhodnout, zda je ohodnocení konzistentní s~předešlými ohodnocenými literály. Může navíc objevit nějaké důsledky tohoto ohodnocení v teorii. Výsledek \emph{Solver$_T$} předá zpět DPLL($X$), který podle něj určí další postup. 
+Stejně jako u~líných řešičů, v~DPLL($T$) abstrahuje $Solver_T$ literály teorie za běžné booleovské proměnné, se kterými může DPLL($X$) pracovat. Než tedy začne samotný výpočet, musí být \emph{Solver$_T$} poskytnuta vstupní formule, aby bylo možné provést tuto transformaci. Jakmile pak engine během výpočtu rozhodne o~pravdivostní hodnotě některého abstrahovaného literálu, okamžitě toto rozhodnutí oznámí řešiči teorie. Ten musí rozhodnout, zda je ohodnocení konzistentní s~předešlými ohodnocenými literály. Může navíc objevit nějaké důsledky tohoto ohodnocení v~teorii. Výsledek \emph{Solver$_T$} předá zpět DPLL($X$), který podle něj určí další postup. 
 
-Pokud se ukáže ohodnocení jako konzistentní, pokračuje v~rozhodování o pravdivosti dalších literálů. Bere přitom ohled na nalezené důsledky. Je-li naopak ohodnocení sporné, musí analyzovat příčinu sporu a vrátit se zpět do stavu, kdy byl ještě konzistentní. \emph{Solver$_T$} musí být pro tento případ schopen předávat informace vysvětlující jeho rozhodnutí, poněvadž jako jediný zná vztahy mezi abstrahovanými proměnnými. Samozřejmě se pak od něj vyžaduje také schopnost vrátit se do předchozího stavu, tj.~zapomenout určitý počet nejpozději přidaných ohodnocení.
+Pokud se ukáže ohodnocení jako konzistentní, pokračuje v~rozhodování o~pravdivosti dalších literálů. Bere přitom ohled na nalezené důsledky. Je-li naopak ohodnocení sporné, musí analyzovat příčinu sporu a~vrátit se zpět do stavu, kdy byl ještě konzistentní. \emph{Solver$_T$} musí být pro tento případ schopen předávat informace vysvětlující jeho rozhodnutí, poněvadž jako jediný zná vztahy mezi abstrahovanými proměnnými. Samozřejmě se pak od něj vyžaduje také schopnost vrátit se do předchozího stavu, tj.~zapomenout určitý počet nejpozději přidaných ohodnocení.
 
-Vzhledem k těmto požadavků na \emph{Solver$_T$} dospěli autoři k následujícímu rozhranní propojujícím ho s DPLL($X$):
+Vzhledem k~těmto požadavků na \emph{Solver$_T$} dospěli autoři k~následujícímu rozhranní propojujícím ho s~DPLL($X$):
 
 \begin{description}
 	\item[Initialize(L: množina literálů).] Inicializuje $Solver_T$ s~$L$ jakožto množinou literálů, které se vyskytují v~problému.
-	\item[SetTrue(l: L-literál): množina L-literálů.] Pokud se $l$ ukáže jako konzistentní, přidá ho do seznamu zadaných literálů a vrátí nějakou množinu důsledků tohoto přidání. V opačném případě vyvolá výjimku vyjadřující spornost $l$ s dosud zadanými literály. S ohledem na výkonnost řešiče může být vrácená množina důsledků neúplná (popř. úplně prázdná).
+	\item[SetTrue(l: L-literál): množina L-literálů.] Pokud se $l$ ukáže jako konzistentní, přidá ho do seznamu zadaných literálů a~vrátí nějakou množinu důsledků tohoto přidání. V~opačném případě vyvolá výjimku vyjadřující spornost $l$ s~dosud zadanými literály. S~ohledem na výkonnost řešiče může být vrácená množina důsledků neúplná (popř. úplně prázdná).
 	\item[IsTrue?(l: L-literál): boolean.] Vrátí \emph{true} právě tehdy, když $l$ je důsledkem seznamu přidaných literálů. \emph{false} tedy vrací, pokud je důsledkem tohoto seznamu $\neg l$, nebo pokud z~něj nevyplývá ani $l$, ani $\neg l$.
 	\item[Backtrack(n: přir. číslo).] Odstraní posledních $n$ hodnot ze seznamu zadaných literálů. $n$ nesmí být větší než velikost tohoto seznamu.
 	\item[Explain(l: L-literál): množina L-literálů.] Vrátí pokud možno co nejmenší podmnožinu zadaných literálů, z~jejichž konjunkce plyne $l$. Pro $l$ musí platit, že je důsledkem nějaké takové podmnožiny, tedy musí být obsažen v~návratové hodnotě nějakého volání \icode{SetTrue(l')} takového, že $l'$ nebylo zahozeno žádným následným voláním \icode{Backtrack}.
@@ -69,7 +69,7 @@ Hledání splnitelnosti STP jsme tedy schopni převést na hledání záporného
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{graph_unsat}
-	\caption{Rozhodnutí o nesplnitelnosti STP nalezením záporného cyklu}
+	\caption{Rozhodnutí o~nesplnitelnosti STP nalezením záporného cyklu}
 \end{figure}
 
 Tyto algoritmy však trpí pro náš účel zásadním nedostatkem. Jejich použití znamená, že po každém přidání nové hrany do grafu musí znovu proběhnout celé prohledávání. Tento postup není vhodný pro použití v~SMT řešičích, ve kterých je kladen velký důraz na inkrementalitu. V~následující sekci tedy podrobně rozebereme několik postupů pro řešení problémů SMT s~ohledem na DL a~motivujeme výběr námi použitého algoritmu. 

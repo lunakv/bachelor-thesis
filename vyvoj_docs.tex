@@ -9,7 +9,7 @@ Ohodnocení proměnných je uloženo ve struktuře \icode{PtAsgn}, která obsahu
 
 Samotné termy mají stromovou strukturu. Pokud se nejedná o~atomickou proměnnou, reprezentuje term nějaký $n$-ární funkční či relační symbol společně s~jeho argumenty. K~rozlišení typu symbolu nám opět poslouží API třídy \icode{Logic}, pro přístup k~argumentům je pak použit operátor \icode{[]}. Reprezentuje-li například \icode{Pterm~p} term $(x \lor y)$, budeme mít přístup k~proměnným \icode{p[0]} a~\icode{p[1]}, což jsou \icode{PTRef} reprezentující $x$, respektive $y$. 
 
-\begin{code}[commandchars=\\\{\}, codes={\catcode`+=3}, label=Příklad práce s termem p $\approx (4 \leq x)$]
+\begin{code}[commandchars=\\\{\}, codes={\catcode`+=3}, label=Příklad práce s~termem p $\approx (4 \leq x)$]
 PTRef p;    
 assert( logic.isNumLeq(p) );
 Pterm term = logic.getPterm(p);
@@ -56,8 +56,8 @@ Je vhodné zmínit, že za dobu vývoje OpenSMT v~něm vzniklo několik implemen
 
 \section{Hledání důsledků}\label{dusl}
 
-\section{Rozhodování o splnitelnosti}
+\section{Rozhodování o~splnitelnosti}
 
-\section{Hledání konfliktů a backtracking}
+\section{Hledání konfliktů a~backtracking}
 
 \section{Nalezení splňujícího ohodnocení}
