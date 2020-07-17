@@ -24,7 +24,7 @@ Stejně jako u~líných řešičů, v~DPLL($T$) abstrahuje $Solver_T$ literály 
 
 Pokud se ukáže ohodnocení jako konzistentní, pokračuje v~rozhodování o~pravdivosti dalších literálů. Bere přitom ohled na nalezené důsledky. Je-li naopak ohodnocení sporné, musí analyzovat příčinu sporu a~vrátit se zpět do stavu, kdy byl ještě konzistentní. \emph{Solver$_T$} musí být pro tento případ schopen předávat informace vysvětlující jeho rozhodnutí, poněvadž jako jediný zná vztahy mezi abstrahovanými proměnnými. Samozřejmě se pak od něj vyžaduje také schopnost vrátit se do předchozího stavu, tj.~zapomenout určitý počet nejpozději přidaných ohodnocení.
 
-Vzhledem k~těmto požadavků na \emph{Solver$_T$} dospěli autoři k~následujícímu rozhranní propojujícím ho s~DPLL($X$):
+Vzhledem k~těmto požadavků na \emph{Solver$_T$} dospěli autoři frameworku~\cite{Gazinger04} k~následujícímu rozhranní propojujícím řešič teorie s~DPLL($X$):
 
 \begin{description}
 	\item[Initialize(L: množina literálů).] Inicializuje $Solver_T$ s~$L$ jakožto množinou literálů, které se vyskytují v~problému.
