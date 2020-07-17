@@ -2,17 +2,17 @@
 
 V~této kapitole rozebereme obecné vlastnosti našeho řešení. Nejprve detailněji popíšeme použitý algoritmus a~opodstatníme některá koncepční rozhodnutí, která jsme učinili jako důsledek použitého frameworku. Poté nastíníme obecný způsob fungování programu a~zamyslíme se nad rozdíly mezi různými variantami řešeného problému.
 
-\section{DPLL($T$) s~vyčerpávající propagací teorie}
+\section{DPLL($T$) s~vyčerpávající propagací teorie}\label{dpllt}
 
 Připomeňme si metodu \icode{SetTrue} uvedenou v~sekci \ref{smt}. Ta slouží k~přidání nového omezení do kontextu řešiče teorie. Řešič může volitelně jako návratovou hodnotu uvést nějakou množinu literálů, které detekoval jako důsledky vzniklé přidáním právě tohoto omezení. Může přitom hlásit např. jen \uv{zjevné} důsledky, popřípadě nemusí vracet vůbec žádné. Pokud jsme je ale schopni nacházet v~rozumém čase, nahlášené důsledky jsou užitečnou informací pro hlavní engine, poněvadž pro něj mohou výrazně zmenšit velikost rozhodovacího stromu.
 
-Varianta DPLL($T$) s~vyčerpávající propagací teorie přidává pro \icode{SetTrue} silnou podmínku; řešič musí vrátit \emph{všechny} literály ze vstupní formule, které jsou důsledky stávajícího ohodnocení. Tento předpoklad značně zjednoduší DPLL($X$) engine a~umožní mu pracovat efektivněji. Stane se z~něj \emph{de~facto} běžný SAT řešič, který se liší pouze minimalistickým rozhranním se $Solver_T$. To má mimo jiné za důsledek, že jsme nyní schopni převézt libovolný SAT řešič na bázi DPLL do DPLL($X$) enginu.
+Varianta DPLL($T$) s~vyčerpávající propagací teorie přidává pro \icode{SetTrue} silnou podmínku; řešič musí vrátit \emph{všechny} literály ze vstupní formule, které jsou důsledky stávajícího ohodnocení. Tento předpoklad značně zjednoduší DPLL($X$) engine a~umožní mu pracovat efektivněji. Stane se z~něj \emph{de~facto} běžný SAT řešič, který se liší pouze minimalistickým rozhranním se \Solver. To má mimo jiné za důsledek, že jsme nyní schopni převézt libovolný SAT řešič na bázi DPLL do DPLL($X$) enginu.
 
 Nevýhoda tohoto přístupu je jasná. Povinnost hledat všechny důsledky teorie může řádově zpomalit operaci \icode{SetTrue} pro řešič teorie. Nicméně se ukázalo~\cite{Nieuwenhuis05}, že alespoň v~případě diferenční logiky může tento přístup vést k~rychlé implementaci schopné předčit ostatní alternativy.
 
 \subsection{Návrh řešiče pro diferenční logiku}
 
-$Solver_T$ diferenční logiky využívá principy, se kterými jsme se podrobněji seznámili v~předchozích sekcích. Můžeme například předpokládat, že všechna omezení jsou tvaru $x-y \leq c$ (převod z~dalších forem jsme popsali v~sekci \ref{stp}). Využijeme též převodu omezení do tvaru omezujícího grafu, jak bylo uvedeno v~\ref{graf}.
+\Solver diferenční logiky využívá principy, se kterými jsme se podrobněji seznámili v~předchozích sekcích. Můžeme například předpokládat, že všechna omezení jsou tvaru $x-y \leq c$ (převod z~dalších forem jsme popsali v~sekci \ref{stp}). Využijeme též převodu omezení do tvaru omezujícího grafu, jak bylo uvedeno v~\ref{graf}.
 
 \subsubsection*{Inicializace}
 Během inicializace načte řešič vstupní formuli, uloží si všechna rozdílová omezení, která se v~ní vyskytují, a~předá ji DPLL($X$) jako čistě booleovskou formuli. Během tohoto procesu by měl detekovat vztahy mezi literály a~jejich negacemi a~explicitně je poznamenat. Pokud se například na vstupu vyskytnou nerovnice $x-y \leq 1$ a~$y-x \leq -2$, v~oboru celých čísel je jedna negací druhé. Řešič by tak měl abstrahovat tyto výskyty jako $p$ a~$\neg p$ pro booleovskou proměnnou $p$. Ukládá si přitom překladovou tabulku pamatující si pro každou nerovnici abstrahovaný literál, kterému odpovídá. Zároveň s~tím si udržuje pro každou proměnnou seznam všech nerovnic, ve kterých se tato proměnná vyskytuje (účel těchto seznamů je objasněn níže).
