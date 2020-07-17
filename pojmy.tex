@@ -11,7 +11,6 @@ Jak název napovídá, SMT rozšiřuje SAT o~jazyk logických teorií (konkrétn
 
 Jako příklady teorií tradičně řešených v~SMT lze uvézt např. teorii lineární aritmetiky (LA), teorii neinterpretovaných funkcí s~rovností (EUF), či teorii diferenční logiky (DL), kterou se budeme zabývat ve zbytku práce.
 
-
 \section{Seznámení s~STP}\label{stp}
 
 Jedním ze základních podproblémů vyskytujícím se v~takřka všech plánovacích problémech je takzvaný Simple Temporal Problem (STP). STP poprvé postulovali v~roce 1991 Dechter, Meiri a~Pearl \cite{Dechter91} a~od té doby našel široká využití jak v~informatických oblastech, tak v~oborech od medicíny \cite{Anselma06} po vesmírný let \cite{Fukunaga97}.
@@ -32,4 +31,8 @@ Problematické nejsou ani nerovnice typu $\pm x \leq c$. Pro účely takovýchto
 Můžeme do problému zahrnout taktéž omezení tvaru $x - y < c$. Pro celočíselné proměnné lze tuto nerovnici ekvivalentně zapsat jako $x - y \leq c-1$. V~reálné variantě pak nahradíme nerovnici výrazem $x - y \leq c - \delta$, přičemž nenastavujeme okamžitě konkrétní hodnotu $\delta$, ale udržujeme si ji pouze symbolicky a~určujeme její vhodné dosazení až při výpočtu splňujícího ohodnocení. Tento postup je detailněji popsán v~sekci \ref{int_v_real}. Uvědomme si, že pokud jsme schopni vyjádřit ostré nerovnosti, umíme vyjádřit i~negace neostrých nerovností a~naopak.
 
 V~kontextu SMT pak teorii obsahující výše popsané nerovnice nazveme \emph{teorie diferenční logiky} a~budeme ji značit DL. Celočíselnou variantu této teorie budeme značit jako IDL a~reálnou variantu jako RDL. Nahradíme-li pak v~booleovské formuli některé termy těmito nerovnicemi, ověření splnitelnosti takto vzniklé formule je instancí SMT problému s~ohledem na DL.
+
+\section{OpenSMT}
+
+OpenSMT je moderní SMT řešič, jehož vznik a~vývoj zaštiťuje \emph{Formal Verification and Security Lab} univerzity v~Luganu\footnote{\url{http://verify.inf.usi.ch/FVBTR}}. Byl vytvořen jako nástroj sloužící k~výzkumu nových postupů formální verifikace a~k~podpoření používání SMT řešičů společně s~dalšími verifikačními nástroji. Poskytuje proto jednoduchou infrastrukturu pro vytváření nových řešičů teorie, která je použitelná i~pro vývojáře nespecializující se v~oboru formální verifikace. Současně se aktivně vyvíjí jeho druhá verze, zvaná OpenSMT2.
 
