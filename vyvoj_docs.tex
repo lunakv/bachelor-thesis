@@ -9,10 +9,10 @@ Ohodnocení proměnných je uloženo ve struktuře \icode{PtAsgn}, která obsahu
 
 Samotné termy mají stromovou strukturu. Pokud se nejedná o~atomickou proměnnou, reprezentuje term nějaký $n$-ární funkční či relační symbol společně s~jeho argumenty. K~rozlišení typu symbolu nám opět poslouží API třídy \icode{Logic}, pro přístup k~argumentům je pak použit operátor \icode{[]}. Reprezentuje-li například \icode{Pterm~p} term $(x \lor y)$, budeme mít přístup k~proměnným \icode{p[0]} a~\icode{p[1]}, což jsou \icode{PTRef} reprezentující $x$, respektive $y$. 
 
-\begin{code}[commandchars=\\\{\}, codes={\catcode`+=3}, label=Příklad práce s~termem p $\approx (4 \leq x)$]
+\begin{code}[label=Příklad práce s~termem p $\approx (4 \leq x)$]
 PTRef p;    
 assert( logic.isNumLeq(p) );
-Pterm term = logic.getPterm(p);
+Pterm &term = logic.getPterm(p);
 
 PTRef c = term[0];
 assert( logic.isNumConst(c) );
@@ -50,13 +50,34 @@ Všechny struktury řešiče spojuje dohromady hlavní třída \icode{STPSolver}
 \end{figure}
 
 Je vhodné zmínit, že za dobu vývoje OpenSMT v~něm vzniklo několik implementací základních datových struktur. Hojně užívaným příkladem je třída \icode{vec}, reprezentující běžný vektor. Vyjma malých rozdílů API a~údajné vyšší efektivity na primitivních typech se tyto třídy výrazně neliší od implementací ze standardní knihovny. Konkrétně třída \icode{vec} je navíc omezena skutečností, že jejími prvky nemohou být typy obsahující odkazy (vyjímkou z~tohoto pravidla je zvlášť implementovaný \icode{vec$\langle$vec$\langle$T$\rangle\rangle$}). Za účelem konzistence se zbytkem frameworku jsme se přesto rozhodli využívat tyto lokální struktury všude, kde je to možné. 
-
-
+\newpage
 \section{Přidávání literálů}\label{add}
 
-\section{Hledání důsledků}\label{dusl}
+Na samotném začátku výpočtu se OpenSMT postupně pro každý term zeptá řešiče, zda se jedná o literál jeho teorie. Jelikož tento proces slouží primárně k jejich odlišení běžných booleovských termů, nezkoumáme do hloubky struktury termu, ale provádíme jen povrchovou kontrolu. Pokud předpokládáme, že framework použije náš řešič jen pro odpovídající teorii, je taková kontrola dostačující.
+\begin{code}
+bool STPSolver::isValid(PTRef tr) { return logic.isNumLeq(tr); }
+\end{code}
 
-\section{Rozhodování o~splnitelnosti}
+Jakmile jsou termy takto rozlišeny, řešič je informován o všech literálech, jejichž ohodnocení mu může být oznámeno. K tomu je využita funkce \icode{declareAtom(PTRef)}. V té už musíme projít strukturu literálu, abychom z něj extrahovali relevantní informace. Důležité pro nás přitom je, že díky způsobu, kterým OpenSMT vytváří své termy, nemusíme provádět konverze z různých tvarů omezení (popsaných v sekci \ref{stp}). Neostrých nerovností a obrácených znamének jsme tak v literálech zbaveni dříve, než se o nich řešič vůbec dozví --- všechny literály naší teorie jsou reprezentovány standardní formou $c \leq x - y$, popř. $c \leq \pm x$ pro omezení s jednou proměnnou.\footnote{Tato kanonická transformace mimo jiné ospravedlňuje výše zmíněnou implementaci \icode{isValid}.} Uveďme pro úplnost, že rozdíl je v této reprezentaci nahrazen součtem záporu. Přesnější popis struktury literálu tak je spíše $c \leq x + (-1 \cdot y)$.
+
+Z této formy nám už nedělá problém určit hodnotu $c$ a reference na $x$ a $y$ postupem naznačeným v předchozí sekci. Musíme přitom dbát pouze na to, že nerovnice je v opačné formě než té námi používané. Hrany omezujícího grafu tudíž povedou z $y$ do $x$ s ohodnocením $-c$. Tuto odlišnost zdůrazňujeme, protože je v implementaci práce použití identifikátorů \icode{x} a \icode{y} standardizováno ve smyslu cílového, resp. zdrojového vrcholu hrany.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{ptref_structure}
+	\caption{Ukázka struktury termu (\icode{PTRef tr} $\approx c \leq x - y$)}
+\end{figure}
+
+Jakmile jsme získali informace o hraně, musíme nejprve zkontrolovat, zda už hrana v našem řešiči neexistuje. To se může stát, pokud je hrana negací jiné již přidané hrany (viz. níže). %% TODO garbage reference
+Hledání hrany probíhá postupným projitím seznamu všech hran, ve kterých se vyskytuje $y$ (seznamy si pro každý vrchol ukládá \icode{STPMapper}). Probíhá tedy lineárně v počtu hran obsahujících $y$. Jelikož ale přidávání literálů celkově zabírá jen minimální část celého výpočtu, usoudili jsme, že lineární složitost této operace je pro nás přijatelným kompromisem.
+
+Objevíme-li hranu odpovídající přidanému literálu, stačí nám přidat do třídy \icode{STPMapper} tuto asociaci. Všechny ostatní informace o hraně už známe. V opačném případě musí ze všeho nejdříve \icode{STPStore} tuto hranu vytvořit (případně s vrcholy, které jsme ještě nepotkali). Jakmile je hrana vytvořená, vytvoříme předběžně i její negaci (z důvodů popsaných v sekci \ref{upravy}). Obě nově vytvořené hrany pak přidáme do seznamů hran pro jejich vrcholy. U původní hrany si navíc uložíme její asociaci s oznámeným literálem (pro negaci zatím tato asociace neexistuje). 
+
+Poté, co tento proces proběhne pro všechny literály ve vstupní formuli, jsme schopni každý literál převézt na odpovídající hranu a naopak a dokážeme reprezentovat libovolné ohodnocení přidáním odpovídající hrany do omezujícího grafu.
+
+\section{Oznámení ohodnocení a hledání důsledků}\label{dusl}
+
+\section{Rozhodování o~splnitelnosti}\label{rozhod}
 
 \section{Hledání konfliktů a~backtracking}
 
