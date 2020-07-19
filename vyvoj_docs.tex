@@ -53,14 +53,14 @@ Je vhodné zmínit, že za dobu vývoje OpenSMT v~něm vzniklo několik implemen
 \newpage
 \section{Přidávání literálů}\label{add}
 
-Na samotném začátku výpočtu se OpenSMT postupně pro každý term zeptá řešiče, zda se jedná o literál jeho teorie. Jelikož tento proces slouží primárně k jejich odlišení běžných booleovských termů, nezkoumáme do hloubky struktury termu, ale provádíme jen povrchovou kontrolu. Pokud předpokládáme, že framework použije náš řešič jen pro odpovídající teorii, je taková kontrola dostačující.
+Na samotném začátku výpočtu se OpenSMT postupně pro každý term zeptá řešiče, zda se jedná o~literál jeho teorie. Jelikož tento proces slouží primárně k~jejich odlišení běžných booleovských termů, nezkoumáme do hloubky struktury termu, ale provádíme jen povrchovou kontrolu. Pokud předpokládáme, že framework použije náš řešič jen pro odpovídající teorii, je taková kontrola dostačující.
 \begin{code}
 bool STPSolver::isValid(PTRef tr) { return logic.isNumLeq(tr); }
 \end{code}
 
-Jakmile jsou termy takto rozlišeny, řešič je informován o všech literálech, jejichž ohodnocení mu může být oznámeno. K tomu je využita funkce \icode{declareAtom(PTRef)}. V té už musíme projít strukturu literálu, abychom z něj extrahovali relevantní informace. Důležité pro nás přitom je, že díky způsobu, kterým OpenSMT vytváří své termy, nemusíme provádět konverze z různých tvarů omezení (popsaných v sekci \ref{stp}). Neostrých nerovností a obrácených znamének jsme tak v literálech zbaveni dříve, než se o nich řešič vůbec dozví --- všechny literály naší teorie jsou reprezentovány standardní formou $c \leq x - y$, popř. $c \leq \pm x$ pro omezení s jednou proměnnou.\footnote{Tato kanonická transformace mimo jiné ospravedlňuje výše zmíněnou implementaci \icode{isValid}.} Uveďme pro úplnost, že rozdíl je v této reprezentaci nahrazen součtem záporu. Přesnější popis struktury literálu tak je spíše $c \leq x + (-1 \cdot y)$.
+Jakmile jsou termy takto rozlišeny, řešič je informován o~všech literálech, jejichž ohodnocení mu může být oznámeno. K~tomu je využita funkce \icode{declareAtom(PTRef)}. V~té už musíme projít strukturu literálu, abychom z~něj extrahovali relevantní informace. Důležité pro nás přitom je, že díky způsobu, kterým OpenSMT vytváří své termy, nemusíme provádět konverze z~různých tvarů omezení (popsaných v~sekci \ref{stp}). Neostrých nerovností a~obrácených znamének jsme tak v~literálech zbaveni dříve, než se o~nich řešič vůbec dozví --- všechny literály naší teorie jsou reprezentovány standardní formou $c \leq x - y$, popř. $c \leq \pm x$ pro omezení s~jednou proměnnou.\footnote{Tato kanonická transformace mimo jiné ospravedlňuje výše zmíněnou implementaci \icode{isValid}.} Uveďme pro úplnost, že rozdíl je v~této reprezentaci nahrazen součtem záporu. Přesnější popis struktury literálu tak je spíše $c \leq x + (-1 \cdot y)$.
 
-Z této formy nám už nedělá problém určit hodnotu $c$ a reference na $x$ a $y$ postupem naznačeným v předchozí sekci. Musíme přitom dbát pouze na to, že nerovnice je v opačné formě než té námi používané. Hrany omezujícího grafu tudíž povedou z $y$ do $x$ s ohodnocením $-c$. Tuto odlišnost zdůrazňujeme, protože je v implementaci práce použití identifikátorů \icode{x} a \icode{y} standardizováno ve smyslu cílového, resp. zdrojového vrcholu hrany.
+Z~této formy nám už nedělá problém určit hodnotu $c$ a~reference na $x$ a~$y$ postupem naznačeným v~předchozí sekci. Musíme přitom dbát pouze na to, že nerovnice je v~opačné formě než té námi používané. Hrany omezujícího grafu tudíž povedou z~$y$ do $x$ s~ohodnocením $-c$. Tuto odlišnost zdůrazňujeme, protože je v~implementaci práce použití identifikátorů \icode{x} a~\icode{y} standardizováno ve smyslu cílového, resp. zdrojového vrcholu hrany.
 
 \begin{figure}
 	\centering
@@ -68,14 +68,14 @@ Z této formy nám už nedělá problém určit hodnotu $c$ a reference na $x$ a
 	\caption{Ukázka struktury termu (\icode{PTRef tr} $\approx c \leq x - y$)}
 \end{figure}
 
-Jakmile jsme získali informace o hraně, musíme nejprve zkontrolovat, zda už hrana v našem řešiči neexistuje. To se může stát, pokud je hrana negací jiné již přidané hrany (viz. níže). %% TODO garbage reference
-Hledání hrany probíhá postupným projitím seznamu všech hran, ve kterých se vyskytuje $y$ (seznamy si pro každý vrchol ukládá \icode{STPMapper}). Probíhá tedy lineárně v počtu hran obsahujících $y$. Jelikož ale přidávání literálů celkově zabírá jen minimální část celého výpočtu, usoudili jsme, že lineární složitost této operace je pro nás přijatelným kompromisem.
+Jakmile jsme získali informace o~hraně, musíme nejprve zkontrolovat, zda už hrana v~našem řešiči neexistuje. To se může stát, pokud je hrana negací jiné již přidané hrany (viz. níže). %% TODO garbage reference
+Hledání hrany probíhá postupným projitím seznamu všech hran, ve kterých se vyskytuje $y$ (seznamy si pro každý vrchol ukládá \icode{STPMapper}). Probíhá tedy lineárně v~počtu hran obsahujících $y$. Jelikož ale přidávání literálů celkově zabírá jen minimální část celého výpočtu, usoudili jsme, že lineární složitost této operace je pro nás přijatelným kompromisem.
 
-Objevíme-li hranu odpovídající přidanému literálu, stačí nám přidat do třídy \icode{STPMapper} tuto asociaci. Všechny ostatní informace o hraně už známe. V opačném případě musí ze všeho nejdříve \icode{STPStore} tuto hranu vytvořit (případně s vrcholy, které jsme ještě nepotkali). Jakmile je hrana vytvořená, vytvoříme předběžně i její negaci (z důvodů popsaných v sekci \ref{upravy}). Obě nově vytvořené hrany pak přidáme do seznamů hran pro jejich vrcholy. U původní hrany si navíc uložíme její asociaci s oznámeným literálem (pro negaci zatím tato asociace neexistuje). 
+Objevíme-li hranu odpovídající přidanému literálu, stačí nám přidat do třídy \icode{STPMapper} tuto asociaci. Všechny ostatní informace o~hraně už známe. V~opačném případě musí ze všeho nejdříve \icode{STPStore} tuto hranu vytvořit (případně s~vrcholy, které jsme ještě nepotkali). Jakmile je hrana vytvořená, vytvoříme předběžně i~její negaci (z~důvodů popsaných v~sekci \ref{upravy}). Obě nově vytvořené hrany pak přidáme do seznamů hran pro jejich vrcholy. U~původní hrany si navíc uložíme její asociaci s~oznámeným literálem (pro negaci zatím tato asociace neexistuje). 
 
-Poté, co tento proces proběhne pro všechny literály ve vstupní formuli, jsme schopni každý literál převézt na odpovídající hranu a naopak a dokážeme reprezentovat libovolné ohodnocení přidáním odpovídající hrany do omezujícího grafu.
+Poté, co tento proces proběhne pro všechny literály ve vstupní formuli, jsme schopni každý literál převézt na odpovídající hranu a~naopak a~dokážeme reprezentovat libovolné ohodnocení přidáním odpovídající hrany do omezujícího grafu.
 
-\section{Oznámení ohodnocení a hledání důsledků}\label{dusl}
+\section{Oznámení ohodnocení a~hledání důsledků}\label{dusl}
 
 \section{Rozhodování o~splnitelnosti}\label{rozhod}
 
