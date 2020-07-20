@@ -1,10 +1,10 @@
-\chapter{Experimentální měření}
+\chapter{Experimentální měření}\label{experiment}
 
 \section{Metodologie}
 
 Pro účely testování jsme využili proces soutěže SMT-COMP\footnote{\url{https://smt-comp.github.io/}}, která od roku 2005 každoročně srovnává nejlepší současné SMT řešiče na velkém množství různorodých testů z~knihovny SMT-LIB. Náš řešič porovnáváme v~kategorii diferenční logiky s~řešiči, které se účastnili soutěže v~roce 2020. Konkrétně to jsou řešiče CVC4, MathSAT\,5, SMTInterpol, veriT, Yices a~z3.
 
-Náš experiment proběhl na 834 testovacích vstupech knihovny SMT-LIB určených pro diferenční logiku. Samotné výpočty probíhaly na počítačích clusteru StarExec\footnote{\url{https://www.starexec.org/}}, iniciativy vzniklé za účelem jednoduššího vytváření, vyhodnocování a~sdílení testů pro různé druhy logických řešičů. Počítače, jež jsou součástí clusteru, obsahují $2.4\rm GHz$ procesor Intel\textregistered\ Xeon\textregistered\ E5-2609 a~cca.~$250\,\rm GB$ operační paměti. Používají operační systém CentOS verze 7.7 běžící na linuxovém jádře verze 3.10.0
+Náš experiment proběhl na 834 testovacích vstupech knihovny SMT-LIB určených pro diferenční logiku. Samotné výpočty probíhaly na počítačích clusteru StarExec\footnote{\url{https://www.starexec.org/}}, iniciativy vzniklé za účelem jednoduššího vytváření, vyhodnocování a~sdílení testů pro různé druhy logických řešičů. Počítače, jež jsou součástí clusteru, obsahují $2.4\rm GHz$ procesor Intel\textregistered\ Xeon\textregistered\ E5-2609, cca.~$250\,\rm GB$ operační paměti a~používají operační systém CentOS verze 7.7 běžící na linuxovém jádře verze 3.10.0
 
 Omezení stanovená pro testy jsme rovněž převzali z~SMT-COMP. Každý test byl spuštěn s~limitem 1200~sekund reálného času, respektive 4800 sekund procesorového času a~s~omezením na $60\,\rm GB$ operační paměti. Výpočet jsme prohlásili za úspěšně dokončený, pokud skončil v~rámci daných limitů a~vrátil korektní odpověď. Jakmile byl některý z~limitů porušen, popřípadě nebyla-li vrácená odpověď korektní, označili jsme test za neúspěšný. Jako primární srovnávací kritérium pak používáme počet úspěšně vyřešených testů a~sekundárním kritériem je celkový čas výpočtů (výpočty ukončené z~důvodu vypršení času jsou započítány s~časem $1200\,\rm s$).
 
@@ -20,13 +20,15 @@ Přehled výsledků nahlédneme v~tabulce níže, následující strana ilustruj
 		\pulrad{\textbf{Řešič}} &\mc{\textbf{vyřešeno}} & \mc{\textbf{čas}} & \mc{\textbf{SAT}} & \mc{\textbf{UNSAT}} & \mc{\pulrad{\textbf{Timeout}}}\\
 		\midrule
 		Yices & 740 & 128683.6 & 484 & 256 & 94 \\
-		z3 & 727 & 124296.1 & 485 & 242 & 82 \\
+		z3$^n$ & 727 & 124296.1 & 485 & 242 & 82 \\
 		CVC4 & 682 & 231953.6 & 425 & 257 & 152\\
 		\textbf{OpenSMT} & 661 & 260896.8 & 412 & 249 & 173 \\
 		veriT & 621 & 308952.9 & 372 & 249 & 213\\
-		MathSAT\,5 & 585 & 337559.4 & 341 & 244 & 249\\
+		MathSAT\,5$^n$ & 585 & 337559.4 & 341 & 244 & 249\\
 		SMTInterpol & 546 & 396759.1 & 313 & 233 & 288\\
 		\bottomrule
+		\multicolumn{6}{l}{\footnotesize \textit{Pozn:}$^n$ 
+		Řešič byl zařazen do měření SMT-COMP, ale nebyl oficiálně registrován jako soutěžící. }
 	\end{tabular}
 	%\caption{Srovnání SMT řešičů}
 \end{table}
@@ -45,5 +47,6 @@ Přehled výsledků nahlédneme v~tabulce níže, následující strana ilustruj
 
 \section{Srovnání}
 
-%Jak vidíme, OpenSMT se zařadilo do průměru soutěžících. Nemůže se sice zatím rovnat s nejlepšími řešiči Yices a z3, se všemi ostatními však má minimálně srovnatelné hodnocení. V porovnání s CVC4 jsme dosáhli $97\,\%$ vyřešených testů a byli jsme dokonce znatelně úspěšnější než veriT, SMTInterpol a MathSAT.
-%Tyto výsledky považujeme za úspěch jak frameworku OpenSMT, tak naší implementace řešiče diferenční logiky.
+Jak vidíme, OpenSMT se zařadilo do průměru soutěžících --- v~letošním ročníku soutěže SMT-COMP by skončil na čtvrtém místě. Nemůže se zatím rovnat s~nejlepšími řešiči Yices a~z3, které úspěšně vyřešily o~79, resp. o~62 testů více. Se všemi ostatními však má minimálně srovnatelné hodnocení. V~porovnání s~CVC4 jsme dosáhli takřka $97\,\%$ vyřešených testů a~byli jsme dokonce znatelně úspěšnější než řešiče veriT, SMTInterpol a~MathSAT.
+
+Fakt, že náš řešič ve všech 682 vyřešených testech vrátil správné řešení, navíc můžeme brát jako relativně silný důkaz jeho korektnosti. Tyto výsledky tedy považujeme za úspěch jak frameworku OpenSMT, tak naší implementace řešiče diferenční logiky.
