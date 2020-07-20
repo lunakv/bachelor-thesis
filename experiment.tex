@@ -2,13 +2,15 @@
 
 \section{Metodologie}
 
-Pro účely testování jsme využili proces soutěže SMT-COMP\footnote{\url{https://smt-comp.github.io/}}, která od roku 2005 každoročně srovnává nejlepší současné SMT řešiče na velkém množství různorodých testů z knihovny SMT-LIB. Náš řešič porovnáváme v kategorii diferenční logiky s řešiči, které se účastnili soutěže v roce 2020. Konkrétně to jsou řešiče CVC4, MathSAT5, SMTInterpol, veriT, Yices a z3.
+Pro účely testování jsme využili proces soutěže SMT-COMP\footnote{\url{https://smt-comp.github.io/}}, která od roku 2005 každoročně srovnává nejlepší současné SMT řešiče na velkém množství různorodých testů z~knihovny SMT-LIB. Náš řešič porovnáváme v~kategorii diferenční logiky s~řešiči, které se účastnili soutěže v~roce 2020. Konkrétně to jsou řešiče CVC4, MathSAT\,5, SMTInterpol, veriT, Yices a~z3.
 
-Náš experiment proběhl na 834 testovacích vstupech knihovny SMT-LIB určených pro diferenční logiku. Samotné výpočty probíhaly na počítačích clusteru StarExec\footnote{\url{https://www.starexec.org/}}, iniciativy vzniklé za účelem jednoduššího vytváření, vyhodnocování a sdílení testů pro různé druhy logických řešičů. Počítače, jež jsou součástí clusteru, obsahují 2.4~GHz procesor Intel\textregistered Xeon\textregistered E5-2609 a cca.~250 GB operační paměti.
+Náš experiment proběhl na 834 testovacích vstupech knihovny SMT-LIB určených pro diferenční logiku. Samotné výpočty probíhaly na počítačích clusteru StarExec\footnote{\url{https://www.starexec.org/}}, iniciativy vzniklé za účelem jednoduššího vytváření, vyhodnocování a~sdílení testů pro různé druhy logických řešičů. Počítače, jež jsou součástí clusteru, obsahují $2.4\rm GHz$ procesor Intel\textregistered\ Xeon\textregistered\ E5-2609 a~cca.~$250\,\rm GB$ operační paměti. Používají operační systém CentOS verze 7.7 běžící na linuxovém jádře verze 3.10.0
 
-Omezení stanovená pro testy jsme rovněž převzali z SMT-COMP. Každý test byl spuštěn s limitem 1200~s reálného času, respektive 4800~s procesorového času a s omezením na 60~GB paměti. Výpočet prohlásíme za úspěšně dokončený, pokud skončil v rámci daných limitů a vrátil korektní odpověď. Jakmile je některý z limitů porušen, popřípadě není-li vrácená odpověď korektní, označili jsme test za neúspěšný. 
+Omezení stanovená pro testy jsme rovněž převzali z~SMT-COMP. Každý test byl spuštěn s~limitem 1200~sekund reálného času, respektive 4800 sekund procesorového času a~s~omezením na $60\,\rm GB$ operační paměti. Výpočet jsme prohlásili za úspěšně dokončený, pokud skončil v~rámci daných limitů a~vrátil korektní odpověď. Jakmile byl některý z~limitů porušen, popřípadě nebyla-li vrácená odpověď korektní, označili jsme test za neúspěšný. Jako primární srovnávací kritérium pak používáme počet úspěšně vyřešených testů a~sekundárním kritériem je celkový čas výpočtů (výpočty ukončené z~důvodu vypršení času jsou započítány s~časem $1200\,\rm s$).
 
 \section{Výsledky}
+
+Přehled výsledků nahlédneme v~tabulce níže, následující strana ilustruje srovnání řešičů s~OpenSMT na úspěšných testech (osy mají logaritmické měřítko a~označují reálný čas výpočtu v~sekundách). Dodejme ještě, že žádný z~testů neskončil nesprávným ohodnocením a~všechny testy se vešly do paměťového limitu --- veškerá předčasná ukončení byla způsobena překročením omezení pro reálný čas.
 
 \begin{table}[h]
 	\centering
@@ -22,22 +24,26 @@ Omezení stanovená pro testy jsme rovněž převzali z SMT-COMP. Každý test b
 		CVC4 & 682 & 231953.6 & 425 & 257 & 152\\
 		\textbf{OpenSMT} & 661 & 260896.8 & 412 & 249 & 173 \\
 		veriT & 621 & 308952.9 & 372 & 249 & 213\\
-		MathSAT & 585 & 337559.4 & 341 & 244 & 249\\
+		MathSAT\,5 & 585 & 337559.4 & 341 & 244 & 249\\
 		SMTInterpol & 546 & 396759.1 & 313 & 233 & 288\\
 		\bottomrule
 	\end{tabular}
 	%\caption{Srovnání SMT řešičů}
 \end{table}
 
-{
+\begin{figure}
 	\centering
 		\includegraphics[width=0.49\linewidth]{comp_yices}
 		\includegraphics[width=0.49\linewidth]{comp_z3}\\
 		\vspace{5px}
-		\includegraphics[width=0.49\linewidth]{comp_mathsat}
-		\includegraphics[width=0.49\linewidth]{comp_smti}\\
-		\vspace{5px}
 		\includegraphics[width=0.49\linewidth]{comp_cvc}
 		\includegraphics[width=0.49\linewidth]{comp_verit}\\
-}
+		\vspace{5px}
+		\includegraphics[width=0.49\linewidth]{comp_mathsat}
+		\includegraphics[width=0.49\linewidth]{comp_smti}
+\end{figure}
+
 \section{Srovnání}
+
+%Jak vidíme, OpenSMT se zařadilo do průměru soutěžících. Nemůže se sice zatím rovnat s nejlepšími řešiči Yices a z3, se všemi ostatními však má minimálně srovnatelné hodnocení. V porovnání s CVC4 jsme dosáhli $97\,\%$ vyřešených testů a byli jsme dokonce znatelně úspěšnější než veriT, SMTInterpol a MathSAT.
+%Tyto výsledky považujeme za úspěch jak frameworku OpenSMT, tak naší implementace řešiče diferenční logiky.
