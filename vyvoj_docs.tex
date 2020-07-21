@@ -77,7 +77,24 @@ Poté, co tento proces proběhne pro všechny literály ve vstupní formuli, jsm
 
 \section{Oznámení ohodnocení a~hledání důsledků}\label{dusl}
 
+Nejdůležitější část výpočtu se odehrává ve funkci \icode{STPSolver::assertLit}, pomocí které se řešič dozvídá o~nových ohodnocení literálů. Funkce nejprve převede literál na odpovídající hranu. Následně zkontroluje, zda jsme hranu již neobjevili. Je-li hrana označená jako \emph{pravdivá} (tj. je buď v~omezujícím grafu, nebo v~seznamu důsledků), můžeme proces ukončit a~oznámit úspěšné přidání ohodnocení. Je-li naopak pravdivě označená negace hrany, přidané ohodnocení je sporné. V~takovém případě si zapamatujeme bod, ve kterém jsme se do sporu dostali, a~skončíme proces oznámením o~neúspěchu přidání hrany. 
+
+Pokud nenastane ani jedna z~těchto možností, uložíme si asociaci hrany s~danou proměnnou \icode{PtAsgn}, přidáme ji do omezujícího grafu a~začneme hledat důsledky tohoto přidání. Přidání hrany do omezujícího grafu znamená její přidání do seznamu hran grafu a~do obou seznamů sousedů a~nastavení její vlastnosti \icode{setTime} na počet aktuálně přidaných hran. Kontrolu pravdivosti hrany z~předchozího odstavce provádíme pomocí vlastnosti \icode{setTime}, která je pro pravdivé hrany nenulová.
+
+Hledání důsledků zařizuje funkce \icode{STPGraphManager::findConsequences}. Ta nejprve najde seznam možných počátečních a~koncových vrcholů pro cesty procházející přidanou hranou. K~tomu využíváme prohledávání do hloubky, jak bylo popsané v~referenčním algoritmu. Prohledávání přitom probíhá sekvenčně --- nejprve hledáme počáteční vrcholy, poté hledáme vrcholy cílové. Jelikož prohledávání na společných datech provádí pouze čtecí operace, bylo by možné tento proces paralelizovat a~hledat obě množiny současně. Během vývoje jsme zkoušeli uplatnit tento přístup, nicméně režie vytváření a~rušení vláken  se ukázala časově náročnější než samotné prohledávání. Prozkoumali jsme také možnost nastavit hranici na velikost grafu určující, zda výpočet proběhne sekvenčně, či paralelně. V~praxi se ale ukázalo, že hranice byla buď příliš vysoká a~vícevláknový přístup nebyl nikdy použit, nebo byla příliš nízká a~použití vláken stále zhoršovalo výkonnost programu. Rozhodli jsme se tak zůstat u~běžné jednovláknové varianty. Využití perzistentního pole vláken nebo rigoróznější hledání limitu pro použití vlákna jsou možné oblasti dalšího zkoumání, dle našeho úsudku by ale nepřinesly podstatné zrychlení algoritmu.
+
+Poté, co obě množiny nalezneme, vybereme tu, jejíž vrcholy se celkově objevují v~menším množství hran (tyto součty počítáme v~průběhu DFS). Pro kažý vrchol z~vybrané množiny projdeme seznam všech hran, v~nichž se vyskytuje (tyto seznamy si ukládá \icode{STPMapper}) a~uložíme si všechny, které jsou důsledky naposledy přidané hrany. Aby byla hrana $a \xrightarrow{c'} b$ důsledkem právě přidané hrany $y \xrightarrow{c} x$, musí platit 
+\begin{enumerate}
+	\item Existuje cesta $a \rightarrow y \xrightarrow{c} x \rightarrow b$.
+	\item $c'$ je větší než délka nekratší takové cesty.
+\end{enumerate}
+
+Snadno nahlédneme, že tyto dvě podmínky pokrývají právě všechna omezení, která jsou důsledky přidání hrany $y \xrightarrow{c} x$ do grafu. Jakmile objevíme všechny takovéto hrany, musíme je převézt zpět do tvaru \icode{PtAsgn} a~předat je frameworku. Odpovídá-li přitom hraně \icode{h} literál \icode{tr} a~negaci \icode{h} literál \icode{nr}, objevení \icode{h} jakožto důsledku způsobí označení \icode{PtAsgn(tr,true)} a~\icode{PtAsgn(nr,false)} jako důsledků oznámeného ohodnocení (pokud \icode{tr} a~\icode{nr} existuje). Pokud existuje odpovídající literál \icode{nr} i~k~negaci hrany právě přidané do grafu, nesmíme zapomenout ani na vytvoření důsledku \icode{PtAsgn(nr,false)} pro tuto hranu.
+
+Oznamování takto nalezených dedukcí provádíme pomocí rozhranní abstraktní třídy \icode{TSolver}, jíž je \icode{STPSolver} potomkem. Ta poskytuje funkci \icode{storeDeduction}, které můžeme předat námi vytvořené důsledky. Funkce technicky vzato bere jako parametr strukturu \icode{PtAsgn\_reason}, jež ale v~řešiči existuje pouze z~historických důvodů a~funkčně se nijak neliší od běžného \icode{PtAsgn}. Voláním \icode{storeDeduction} uložíme nalezené důsledky ve vnitřní struktuře \icode{TSolver}, z~níž už je zbytek řešiče dokáže získat.
 \section{Rozhodování o~splnitelnosti}\label{rozhod}
+
+
 
 \section{Hledání konfliktů a~backtracking}
 
