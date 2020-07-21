@@ -238,7 +238,7 @@ FUNCTION {format.editors}
     { "" }
     { editor format.names scshape       %% scshape added by AK
       editor num.names$ #1 >
-        { ", editors" * }
+        { ", editoři" * }               %% changed "editors" to "editoři"
         { ", editor" * }
       if$
     }
@@ -431,8 +431,8 @@ FUNCTION {format.in.ed.booktitle}
 { booktitle empty$
     { "" }
     { editor empty$
-        { "In " booktitle emphasize * }
-        { "In " format.editors * ", " * booktitle emphasize * }
+        { "" booktitle emphasize * }                          %% changed "In " to ""
+        { "" format.editors * ", " * booktitle emphasize * }  %% changed "In " to "" 
       if$
     }
   if$
