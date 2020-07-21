@@ -5,17 +5,17 @@
 
 Problém splnitelnosti booleovské formule, označovaný též zkratkou SAT, patří k~nejznámějším problémům z~oboru matematické logiky. V~roce 1971 se stal prvním dokazatelně NP-úplným problémem \cite{Cook71} a~v~důsledku toho i~užitečným nástrojem pro teorii složitosti, pomocí něhož lze rozhodovat o~NP-úplnosti dalších problémů.\footnote{Příklady převodů NP-úplných problémů na SAT můžeme nalézt např. v~\cite[kapitola 19]{Mares17}}
 
-V~praktickém použití však SAT naráží na své limitované vyjadřovací schopnosti. Práce s~binárními proměnnými, omezenými pouze na dvě různé hodnoty, může komplikovat převod reálného problému do tvaru booleovské formule. Potřeba užití komplexnějších atomů tak vedla ke zobecnění SAT zvanému \emph{Satisfiability modulo theories} (SMT).
+V~praktickém použití však SAT naráží na své limitované vyjadřovací schopnosti. Práce s~booleovskými proměnnými, omezenými pouze na dvě různé hodnoty, může komplikovat převod reálného problému do tvaru booleovské formule. Potřeba užití komplexnějších atomů tak vedla ke zobecnění SAT zvanému \emph{Satisfiability modulo theories} (SMT).
 
-Jak název napovídá, SMT rozšiřuje SAT o~jazyk logických teorií (konkrétně teorií predikátové logiky prvního řádu). Máme-li nějakou teorii $T$, pak instancí SMT rozumíme formuli jazyka této teorie. Jiným pohledem můžeme na instanci SMT nahlížet jako na booleovskou formuli, ve které jsme nahradili některé binární proměnné za predikáty obsažené v~$T$. problému vztaženému k~této konkrétní teorii pak říkáme \emph{SMT s~ohledem na $T$}.
+Jak název napovídá, SMT rozšiřuje SAT o~jazyk logických teorií (konkrétně teorií predikátové logiky prvního řádu). Máme-li nějakou teorii $T$, pak instancí SMT rozumíme formuli jazyka této teorie. Jiným pohledem můžeme na instanci SMT nahlížet jako na booleovskou formuli, ve které jsme nahradili některé binární proměnné za predikáty obsažené v~$T$. Problému vztaženému k~této konkrétní teorii pak říkáme \emph{SMT s~ohledem na $T$}.
 
 Jako příklady teorií tradičně řešených v~SMT lze uvézt např. teorii lineární aritmetiky (LA), teorii neinterpretovaných funkcí s~rovností (EUF), či teorii diferenční logiky (DL), kterou se budeme zabývat ve zbytku práce.
 
-\section{Seznámení s~STP}\label{stp}
+\section{Simple Temporal Problem}\label{stp}
 
-Jedním ze základních podproblémů vyskytujícím se v~takřka všech plánovacích problémech je takzvaný Simple Temporal Problem (STP). STP poprvé postulovali v~roce 1991 Dechter, Meiri a~Pearl \cite{Dechter91} a~od té doby našel široká využití jak v~informatických oblastech, tak v~oborech od medicíny \cite{Anselma06} po vesmírný let \cite{Fukunaga97}.
+Jedním ze základních podproblémů vyskytujícím se v~takřka všech plánovacích problémech je takzvaný \emph{Simple Temporal Problem} (STP). STP poprvé postulovali v~roce 1991 Dechter, Meiri a~Pearl \cite{Dechter91} a~od té doby našel široká využití jak v~informatických oblastech, tak v~oborech od medicíny \cite{Anselma06} po vesmírný let \cite{Fukunaga97}.
 
-Vstupem STP je množina rozdílových omezení, to jest nerovnic tvaru $$x - y \leq c,$$ kde $x$ a~$y$ jsou proměnné a~$c$ je konstanta. V~závislosti na tom, jakou verzi problému řešíme, přitom pracujeme buď s~celočíselnými, nebo s~reálnými hodnotami. Výstupem tohoto problému je pak rozhodnutí, zda existuje ohodnocení proměnných tak, aby byla splněna všechna zadaná omezení. V~rozšíření problému pak můžeme požadovat na výstupu i~nějaké takovéto splnitelné ohodnocení, pokud existuje, případně nalezení pokud možno co nejmenší podmnožiny omezení, která zajišťuje nesplnitelnost problému.
+Vstupem STP je množina rozdílových omezení, to jest nerovnic tvaru $$x - y \leq c,$$ kde $x$ a~$y$ jsou proměnné a~$c$ je konstanta. V~závislosti na tom, jakou verzi problému řešíme, přitom pracujeme buď s~celočíselnými, nebo s~reálnými hodnotami. Výstupem tohoto problému je pak rozhodnutí, zda existuje takové ohodnocení proměnných, že jsou splněna všechna zadaná omezení. V~rozšíření problému pak můžeme požadovat na výstupu i~nějaké splňující ohodnocení, pokud existuje, případně nalezení pokud možno co nejmenší podmnožiny omezení, která způsobuje nesplnitelnost problému.
 
 Na první pohled se může zdát pevně daný tvar nerovnic příliš omezující, uvědomme si však, že do této formy můžeme převést několik dalších druhů nerovnic. Nejsnáze zahrneme do problému omezení tvaru $x - y = c$; ty stačí jednoduše nahradit nerovnicemi $x - y \leq c$ a~$x - y \geq c$.
 
@@ -25,12 +25,12 @@ Problematické nejsou ani nerovnice typu $\pm x \leq c$. Pro účely takovýchto
 	Je-li $\sigma$ splňující ohodnocení nějakého STP a~$\delta$ libovolná konstanta, pak ohodnocení $\pi$ definované pro všechny proměnné $x$ jako $\pi(x) = \sigma(x) + \delta$ je také splňující ohodnocení tohoto STP.
 \end{tvrz}
 \begin{proof}
-	Je-li $\sigma$ splňující ohodnocení, pro libovolné rozdílové omezení $x-y \leq c$ v~problému platí $$\pi(x) - \pi(y) = (\sigma(x) + \delta) - (\sigma(y) + \delta) = \sigma(x) - \sigma(y) \leq c,$$ z~čehož je i~$\pi$ splňující ohodnocení.
+	Je-li $\sigma$ splňující ohodnocení, pro libovolné rozdílové omezení $x-y \leq c$ v~problému platí $$\pi(x) - \pi(y) = (\sigma(x) + \delta) - (\sigma(y) + \delta) = \sigma(x) - \sigma(y) \leq c,$$ z~čehož plyne, že i~$\pi$ je splňující ohodnocení.
 \end{proof}
 
 Můžeme do problému zahrnout taktéž omezení tvaru $x - y < c$. Pro celočíselné proměnné lze tuto nerovnici ekvivalentně zapsat jako $x - y \leq c-1$. V~reálné variantě pak nahradíme nerovnici výrazem $x - y \leq c - \delta$, přičemž nenastavujeme okamžitě konkrétní hodnotu $\delta$, ale udržujeme si ji pouze symbolicky a~určujeme její vhodné dosazení až při výpočtu splňujícího ohodnocení. Tento postup je detailněji popsán v~sekci \ref{int_v_real}. Uvědomme si, že pokud jsme schopni vyjádřit ostré nerovnosti, umíme vyjádřit i~negace neostrých nerovností a~naopak.
 
-V~kontextu SMT pak teorii obsahující výše popsané nerovnice nazveme \emph{teorie diferenční logiky} a~budeme ji značit DL. Celočíselnou variantu této teorie budeme značit jako IDL a~reálnou variantu jako RDL. Nahradíme-li pak v~booleovské formuli některé termy těmito nerovnicemi, ověření splnitelnosti takto vzniklé formule je instancí SMT problému s~ohledem na DL.
+V~kontextu SMT pak teorii obsahující výše popsané nerovnice nazveme \emph{teorie diferenční logiky} a~budeme ji značit DL. Celočíselnou variantu této teorie budeme značit jako IDL a~reálnou variantu jako RDL. Nahradíme-li pak v~booleovské formuli některé termy těmito nerovnicemi, ověření splnitelnosti takto vzniklé formule je instancí \emph{SMT problému s~ohledem na DL}.
 
 \section{OpenSMT}
 

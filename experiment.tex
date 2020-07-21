@@ -2,7 +2,7 @@
 
 \section{Metodologie}
 
-Pro účely testování jsme využili proces soutěže SMT-COMP\footnote{\url{https://smt-comp.github.io/}}, která od roku 2005 každoročně srovnává nejlepší současné SMT řešiče na velkém množství různorodých testů z~knihovny SMT-LIB. Náš řešič porovnáváme v~kategorii diferenční logiky s~řešiči, které se účastnili soutěže v~roce 2020. Konkrétně to jsou řešiče CVC4, MathSAT\,5, SMTInterpol, veriT, Yices a~z3.
+Pro účely testování jsme využili proces soutěže SMT-COMP\footnote{\url{https://smt-comp.github.io/}}, která od roku 2005 každoročně srovnává nejlepší současné SMT řešiče na velkém množství různorodých testů z~knihovny SMT-LIB. Náš řešič porovnáváme v~kategorii diferenční logiky s~řešiči, které se účastnily soutěže v~roce 2020. Konkrétně to jsou řešiče CVC4, MathSAT\,5, SMTInterpol, veriT, Yices a~z3.
 
 Náš experiment proběhl na 834 testovacích vstupech knihovny SMT-LIB určených pro diferenční logiku. Samotné výpočty probíhaly na počítačích clusteru StarExec\footnote{\url{https://www.starexec.org/}}, iniciativy vzniklé za účelem jednoduššího vytváření, vyhodnocování a~sdílení testů pro různé druhy logických řešičů. Počítače, jež jsou součástí clusteru, obsahují $2.4\rm GHz$ procesor Intel\textregistered\ Xeon\textregistered\ E5-2609, cca.~$250\,\rm GB$ operační paměti a~používají operační systém CentOS verze 7.7 běžící na linuxovém jádře verze 3.10.0
 
@@ -43,6 +43,7 @@ Přehled výsledků nahlédneme v~tabulce níže, následující strana ilustruj
 		\vspace{5px}
 		\includegraphics[width=0.49\linewidth]{comp_mathsat}
 		\includegraphics[width=0.49\linewidth]{comp_smti}
+		\caption{Srovnání OpenSMT s~ostatními SMT řešiči na vyřešených testech}
 \end{figure}
 
 \section{Srovnání}

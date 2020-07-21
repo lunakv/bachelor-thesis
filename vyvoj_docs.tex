@@ -41,7 +41,7 @@ Samotný omezující graf ukládáme do struktury \icode{STPEdgeGraph}. Ta obsah
 
 Třídu \icode{STPModel} využijeme, pokud chceme pro splnitelnou množinu nerovnic najít nějaké ohodnocení proměnných. \icode{STPModel} dostane kopii grafu, ze které vytvoří mapu ohodnocení obsažených vrcholů.
 
-Všechny struktury řešiče spojuje dohromady hlavní třída \icode{STPSolver}. Jakožto potomek \icode{TSolver} implementuje tato třída rozhranní mezi řešičem a~zbytkem frameworku. %% TODO add more.
+Všechny struktury řešiče spojuje dohromady hlavní třída \icode{STPSolver}. Jakožto potomek \icode{TSolver} implementuje tato třída rozhraní mezi řešičem a~zbytkem frameworku. %% TODO add more.
 
 \begin{figure}
 	\centering
@@ -91,7 +91,7 @@ Poté, co obě množiny nalezneme, vybereme tu, jejíž vrcholy se celkově obje
 
 Snadno nahlédneme, že tyto dvě podmínky pokrývají právě všechna omezení, která jsou důsledky přidání hrany $y \xrightarrow{c} x$ do grafu. Jakmile objevíme všechny takovéto hrany, musíme je převézt zpět do tvaru \icode{PtAsgn} a~předat je frameworku. Odpovídá-li přitom hraně \icode{h} literál \icode{tr} a~negaci \icode{h} literál \icode{nr}, objevení \icode{h} jakožto důsledku způsobí označení \icode{PtAsgn(tr,true)} a~\icode{PtAsgn(nr,false)} jako důsledků oznámeného ohodnocení (pokud \icode{tr} a~\icode{nr} existuje). Pokud existuje odpovídající literál \icode{nr} i~k~negaci hrany právě přidané do grafu, nesmíme zapomenout ani na vytvoření důsledku \icode{PtAsgn(nr,false)} pro tuto hranu.
 
-Oznamování takto nalezených dedukcí provádíme pomocí rozhranní abstraktní třídy \icode{TSolver}, jíž je \icode{STPSolver} potomkem. Ta poskytuje funkci \icode{storeDeduction}, které můžeme předat námi vytvořené důsledky. Funkce technicky vzato bere jako parametr strukturu \icode{PtAsgn\_reason}, jež ale v~řešiči existuje pouze z~historických důvodů a~funkčně se nijak neliší od běžného \icode{PtAsgn}. Voláním \icode{storeDeduction} uložíme nalezené důsledky ve vnitřní struktuře \icode{TSolver}, z~níž už je zbytek řešiče dokáže získat.
+Oznamování takto nalezených dedukcí provádíme pomocí rozhraní abstraktní třídy \icode{TSolver}, jíž je \icode{STPSolver} potomkem. Ta poskytuje funkci \icode{storeDeduction}, které můžeme předat námi vytvořené důsledky. Funkce technicky vzato bere jako parametr strukturu \icode{PtAsgn\_reason}, jež ale v~řešiči existuje pouze z~historických důvodů a~funkčně se nijak neliší od běžného \icode{PtAsgn}. Voláním \icode{storeDeduction} uložíme nalezené důsledky ve vnitřní struktuře \icode{TSolver}, z~níž už je zbytek řešiče dokáže získat.
 \section{Rozhodování o~splnitelnosti}\label{rozhod}
 
 
