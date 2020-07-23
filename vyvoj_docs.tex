@@ -3,6 +3,7 @@
 %Tato kapitola detailně popisuje implementaci našeho programu. V každé sekci podrobně rozebereme jednu část řešení, rozhodnutí vedoucí k její implementaci a případné problémy, na které jsme narazili během vývoje.
 \section{Datové struktury}\label{data}
 
+\subsection*{Struktury OpenSMT}
 Základní datovou strukturou v~OpenSMT je \icode{Pterm}, reprezentující jeden term vyskytující se ve vstupní formuli. Odkazy na tyto termy jsou pak předávány pomocí referenční struktury \icode{PTRef}. Ta obsahuje pouze numerický identifikátor použitý k~jejímu rozlišení. Mapování jednotlivých referencí na odpovídající termy přitom zařizuje třída \icode{Logic}, respektive její potomci. \icode{Logic} si ukládá převodní tabulku párující \icode{PTRef} a~jejich odpovídající \icode{Pterm} a~poskytuje také mechanismy pro vytváření nových termů. Její potomci pak rozšiřují tyto mechanismy o~možnosti odpovídající dané teorii, např. s~\icode{LALogic} jsme schopni vytvářet termy odpovídající nerovnicím z~lineární aritmetiky. Jelikož rozdílová omezení jsou speficickým tvarem lineárních nerovnic, využívá náš řešič právě schopností \icode{LALogic}, konkrétně \icode{LIALogic} pro implementovanou celočíselnou verzi.
 
 Ohodnocení proměnných je uloženo ve struktuře \icode{PtAsgn}, která obsahuje \icode{PTRef} odpovídající ohodnocené proměnné a~\icode{lbool} označující její ohodnocení (\icode{lbool} je běžný optional boolean).
@@ -23,6 +24,7 @@ PTRef x = term[1];
 assert( logic.isNumVar(x) );
 \end{code}
 
+\subsection*{Struktury řešiče}
 Nejdůležitější datovou strukturou našeho řešiče je \icode{Edge}. V~té jsou uloženy informace o~jedné hraně omezujícího grafu. Konkrétně tedy obsahuje reference na její vstupní a~výstupní vrchol, ohodnocení, odkaz na svou negaci a~informaci o~tom, kdy byla přidána do omezujícího grafu. Po vzoru frameworku přitom zbytek řešiče nepracuje přímo s~těmito strukturami, ale s~jejich referencemi \icode{EdgeRef}, které opět obsahují pouze jednoznačný numerický identifikátor. Samotné hrany se pak nacházejí jen v~centrálním úložišti, které tvoří třída \icode{STPStore}. Ta zařizuje zejména tvorbu nových hran a~převod z~\icode{EdgeRef} na \icode{Edge\&}. Použit je i~protějšek k~\icode{EdgeRef} pro vrcholy, struktura \icode{VertexRef}. Jelikož se však s~vrcholy nepojí žádná informace, nejedná se o~odkaz na další strukturu, ale pouze o~symbolické reference, sloužící pro vzájemné rozlišení jednotlivých vrcholů.
 
 %\captionof{verbatim}{test}
@@ -77,9 +79,7 @@ Poté, co tento proces proběhne pro všechny literály ve vstupní formuli, jsm
 
 \section{Oznámení ohodnocení a~hledání důsledků}\label{dusl}
 
-Nejdůležitější část výpočtu se odehrává ve funkci \icode{STPSolver::assertLit}, pomocí které se řešič dozvídá o~nových ohodnocení literálů. Funkce nejprve převede literál na odpovídající hranu. Následně zkontroluje, zda jsme hranu již neobjevili. Je-li hrana označená jako \emph{pravdivá} (tj. je buď v~omezujícím grafu, nebo v~seznamu důsledků), můžeme proces ukončit a~oznámit úspěšné přidání ohodnocení. Je-li naopak pravdivě označená negace hrany, přidané ohodnocení je sporné. V~takovém případě si zapamatujeme bod, ve kterém jsme se do sporu dostali, a~skončíme proces oznámením o~neúspěchu přidání hrany. 
-
-Pokud nenastane ani jedna z~těchto možností, uložíme si asociaci hrany s~danou proměnnou \icode{PtAsgn}, přidáme ji do omezujícího grafu a~začneme hledat důsledky tohoto přidání. Přidání hrany do omezujícího grafu znamená její přidání do seznamu hran grafu a~do obou seznamů sousedů a~nastavení její vlastnosti \icode{setTime} na počet aktuálně přidaných hran. Kontrolu pravdivosti hrany z~předchozího odstavce provádíme pomocí vlastnosti \icode{setTime}, která je pro pravdivé hrany nenulová.
+Nejdůležitější část výpočtu se odehrává ve funkci \icode{STPSolver::assertLit}, pomocí které se řešič dozvídá o~nových ohodnocení literálů. Funkce nejprve zkontroluje, zda se řešič nenachází ve sporném stavu. Pokud ano, přidávání další hrany nemá smysl a funkce okamžitě skončí neúspěchem. V opačném případě převedeme ohodocení na odpovídající hranu. Následně si uložíme asociaci hrany s~danou proměnnou \icode{PtAsgn}, přidáme ji do omezujícího grafu a~začneme hledat důsledky tohoto přidání. Přidání hrany do grafu znamená její přidání do seznamu hran grafu a~do obou seznamů sousedů a~nastavení její vlastnosti \icode{setTime} na počet aktuálně přidaných hran.
 
 Hledání důsledků zařizuje funkce \icode{STPGraphManager::findConsequences}. Ta nejprve najde seznam možných počátečních a~koncových vrcholů pro cesty procházející přidanou hranou. K~tomu využíváme prohledávání do hloubky, jak bylo popsané v~referenčním algoritmu. Prohledávání přitom probíhá sekvenčně --- nejprve hledáme počáteční vrcholy, poté hledáme vrcholy cílové. Jelikož prohledávání na společných datech provádí pouze čtecí operace, bylo by možné tento proces paralelizovat a~hledat obě množiny současně. Během vývoje jsme zkoušeli uplatnit tento přístup, nicméně režie vytváření a~rušení vláken  se ukázala časově náročnější než samotné prohledávání. Prozkoumali jsme také možnost nastavit hranici na velikost grafu určující, zda výpočet proběhne sekvenčně, či paralelně. V~praxi se ale ukázalo, že hranice byla buď příliš vysoká a~vícevláknový přístup nebyl nikdy použit, nebo byla příliš nízká a~použití vláken stále zhoršovalo výkonnost programu. Rozhodli jsme se tak zůstat u~běžné jednovláknové varianty. Využití perzistentního pole vláken nebo rigoróznější hledání limitu pro použití vlákna jsou možné oblasti dalšího zkoumání, dle našeho úsudku by ale nepřinesly podstatné zrychlení algoritmu.
 
@@ -92,10 +92,21 @@ Poté, co obě množiny nalezneme, vybereme tu, jejíž vrcholy se celkově obje
 Snadno nahlédneme, že tyto dvě podmínky pokrývají právě všechna omezení, která jsou důsledky přidání hrany $y \xrightarrow{c} x$ do grafu. Jakmile objevíme všechny takovéto hrany, musíme je převézt zpět do tvaru \icode{PtAsgn} a~předat je frameworku. Odpovídá-li přitom hraně \icode{h} literál \icode{tr} a~negaci \icode{h} literál \icode{nr}, objevení \icode{h} jakožto důsledku způsobí označení \icode{PtAsgn(tr,true)} a~\icode{PtAsgn(nr,false)} jako důsledků oznámeného ohodnocení (pokud \icode{tr} a~\icode{nr} existuje). Pokud existuje odpovídající literál \icode{nr} i~k~negaci hrany právě přidané do grafu, nesmíme zapomenout ani na vytvoření důsledku \icode{PtAsgn(nr,false)} pro tuto hranu.
 
 Oznamování takto nalezených dedukcí provádíme pomocí rozhraní abstraktní třídy \icode{TSolver}, jíž je \icode{STPSolver} potomkem. Ta poskytuje funkci \icode{storeDeduction}, které můžeme předat námi vytvořené důsledky. Funkce technicky vzato bere jako parametr strukturu \icode{PtAsgn\_reason}, jež ale v~řešiči existuje pouze z~historických důvodů a~funkčně se nijak neliší od běžného \icode{PtAsgn}. Voláním \icode{storeDeduction} uložíme nalezené důsledky ve vnitřní struktuře \icode{TSolver}, z~níž už je zbytek řešiče dokáže získat.
+
 \section{Rozhodování o~splnitelnosti}\label{rozhod}
 
+Jak už jsme naznačili v sekci \ref{upravy}, samotné rozhodování o splnitelnosti současného ohodnocení (implementované funkcí \icode{STPSolver::check}) je v podstatě prázdnou operací. To je důsledkem využití vyčerpávající propagace teorie. Je-li některé možné ohodnocení sporné s aktuálním omezujícím grafem, museli jsme objevit hranu odpovídající takovému ohodnocení jako důsledek tohoto grafu. K detekování sporného ohodnocení nám tak stačí zkontrolovat přítomnost této negace ve chvíli, kdy je nám ohodnocení oznámeno.
 
+Kontrolu proto provádíme ve funkci \icode{STPSolver::assertLit}. Ihned poté, co převedeme ohodnocený literál na odpovídající hranu (jak popisuje předchozí sekce), zjistíme, zda je \emph{pravdivá} negace hrany (je součástí omezujícího grafu nebo jeho nalezeným důsledkem). Pokud ano, řešič přejde do sporného stavu a okamžitě frameworku oznámí neúspěšné ohodnocení. Pokud ne, funkce může pokračovat s jistotou, že ohodnocení není sporné a nevytvoří v grafu žádný záporný cyklus. Pravdivost hrany v této kontrole určujeme podle její vlastnosti \icode{Edge::setTime}, která je právě u pravdivých hran nenulová.
 
+Současný stav řešiče indikuje proměnná \icode{STPSolver::inv\_asgn}. Ve sporném stavu proměnná ukládá ohodnocení, kterým se do sporného stavu dostala. V konzistentním stavu obsahuje výchozí hodnotu \icode{PtAsgn\_Undef}, reprezentující absenci takového ohodnocení. Když přecházíme do sporného stavu, zapamatujeme si navíc v proměnné \icode{STPSolver::inv\_bpoint} záchytný bod, ve kterém se řešič právě nachází. Tyto hodnoty jsou pro nás důležité pro mechanismus hledání konfliktů a správné vyhodnocení backtrackingu. Samotnou funkci \icode{check} pak můžeme implementovat jako jednoduchou kontrolu proměnné \icode{inv\_asgn}.
+
+\begin{code}
+TRes STPSolver::check(bool b) { 
+	return inv_asgn == PtAsgn_Undef ? TRes::SAT : TRes::UNSAT; 
+}
+\end{code}
+Pro úplnost dodejme, že parameter \icode{b} v signatuře funkce \icode{check} určuje, zda se jedná pouze o přechodnou kontrolu probíhající v průběhu výpočtu, nebo závěrečnou kontrolu provedenou až na jeho samotném konci. Jelikož náš přístup tyto varianty nerozlišuje, můžeme hodnotu parametru ignorovat.
 \section{Hledání konfliktů a~backtracking}
 
 \section{Nalezení splňujícího ohodnocení}
