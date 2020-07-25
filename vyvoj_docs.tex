@@ -44,6 +44,19 @@ Samotný omezující graf ukládáme do struktury \icode{STPEdgeGraph}. Ta obsah
 Třídu \icode{STPModel} využijeme, pokud chceme pro splnitelnou množinu nerovnic najít nějaké ohodnocení proměnných. \icode{STPModel} dostane kopii grafu, ze které vytvoří mapu ohodnocení obsažených vrcholů.
 
 Všechny struktury řešiče spojuje dohromady hlavní třída \icode{STPSolver}. Jakožto potomek \icode{TSolver} implementuje tato třída rozhraní mezi řešičem a~zbytkem frameworku. %% TODO add more.
+\begin{code}[labelposition=bottomline,label=Základní API třídy STPSolver]
+class STPSolver : public TSolver {
+public:
+	void declareAtom(PTRef tr);
+	bool assertLit(PtAsgn asgn);
+	TRes check(bool b);
+	void getConflict(vec<PtAsgn> &vec);
+	void pushBacktrackPoint();
+	void popBacktrackPoints(unsigned int i);
+	void computeModel();
+	ValPair getValue(PTRef pt);
+}
+\end{code}
 
 \begin{figure}
 	\centering
@@ -114,6 +127,17 @@ Poté, co řešič oznámí sporný stav, se od něj zpravidla vyžaduje, aby de
 
 Náš řešič konliktní množinu hledá pomocí operace \icode{Explain} popsané v~referenčním algoritmu. Tuto operaci provádí funce \icode{STPGraphManager::findExplanation}. K~určení hrany \icode{h}, jejíž vysvětlení hledáme, nám slouží proměnná \icode{inv\_asgn}. Ze třídy \icode{STPMapper} nejprve získáme hranu odpovídající hodnotě \icode{inv\_asgn}. Konfliktní množina je pak ekvivalentní vysvětlení negace této hrany. 
 
+\begin{code}
+void STPSolver::getConflict(vec<PtAsgn> &v) {
+	EdgeRef e = mapper.getEdgeRef(inv_asgn.tr);
+	if (inv_asgn.sgn == l_True)
+	    e = store.getNegation(e);
+	
+	graphMgr.findExplanation(e, v);
+	v.push(inv_asgn);
+}
+\end{code}
+
 Hledání vysvětlení provádí \icode{STPGraphManager} modifikovanou verzí DFS, která probíhá podobně jako při hledání důsledků, ovšem s~několika malými změnami. Začínáme v~počátečním vrcholu \icode{h}. Z~něj spustíme prohledávání popsané v~sekci \ref{dusl}, ve kterém si navíc pro každý vrchol pamatujeme, ze kterého vrcholu byl naposledy navštíven. Prohledávání také prochází pouze přes hrany, které nemají \icode{setTime} vyšší než \icode{h} (čímž zajišťujeme, že se ve vysvětlení neobjevují hrany přidané až po \icode{h}), a~navštěvuje pouze vrcholy, jejichž vzdálenost není vyšší než cena \icode{h} (čímž proces zrychlujeme).
 
 Vzhledem k~podobnostem s~hledáním důsledků jsme zvažovali pouze rozšíření existující funkce \icode{STPGraphManager::dfsSearch} k~tomuto účelu. Drobné rozdíly mezi oběma postupy ale jejich integraci do společné funkce nakonec zabránily. Pokrytí všech možností průběhu v~obou případech by znamenalo zhoršení čitelnosti kódu a~pravděpodobně by se podepsalo i~na rychlosti operace. Rozhodli jsme se proto implementovat \icode{findExplanation} jako samostatnou funkci.
@@ -126,6 +150,13 @@ Vrácenou množinu framework analyzuje a~rozhodne podle ní o~dostatečné úrov
 
 Pro implementaci tohoto systému v~našem řešiči si uvědomme, že v~záchytných bodech nám stačí pamatovat si aktuální stav omezujícího grafu a~aktuální převody mezi ohodnoceními a~hranami. Hodnoty v~\icode{STPStore} ani převody z~\icode{PTRef} na \icode{EdgeRef} se totiž mezi záchytnými body nemohou měnit.
 
+\begin{code}
+void STPSolver::pushBacktrackPoint() {
+	TSolver::pushBacktrackPoint();
+	backtrack_points.push(graphMgr.getAddedCount());
+}
+\end{code}
+
 Jelikož si navíc ukládáme přidané hrany v~grafu chronologicky do seznamu, stačí nám ve skutečnosti k~jednoznačnému určení záchytného bodu jen současný počet přidaných hran. Jakmile ho máme, můžeme při návratu postupně odebírat hrany z~konce seznamu. Každou odebranou hranu pak odstraníme i~z~odpovídajících seznamů sousedů (ty jsou rovněž chronologické, odebíraná hrana je tudíž na jejich konci), vynulujeme její \icode{setTime} a~odstraníme její asociaci s~hodnotou \icode{PtAsgn}. Ze seznamu dedukcí také musíme odstranit všechny dedukce, které mají \icode{setTime} vyšší nebo roven odebírané hraně.  Tyto operace má na starost funkce \icode{STPGraphManager::removeAfter}. 
 
 Jak snadno nahlédneme z~předchozího odstavce, celý proces probíhá v~lineárním čase vzhledem k~počtu odebíraných hran. Byl-li navíc před návratem řešič ve sporném stavu, zkontrolujeme nakonec hodnotu proměnné \icode{inv\_bpoint}. Pokud se backtrackingem vracíme až před záchytný bod uložený v~této proměnné, můžeme řešič vrátit zpět do konzistentního stavu.
@@ -135,8 +166,13 @@ Jak snadno nahlédneme z~předchozího odstavce, celý proces probíhá v~lineá
 Pokud o nějaké formuli rozhodneme, že je splnitelná, může být zajímavé najít nějaké její splňující ohodnocení. Pro řešič teorie to znamená najít splňující ohodnocení jemu předané konjunkce literálů. Za tímto účelem v našem řešiči vznikla třída \icode{STPModel}, která vytváří a ukládá ohodnocení vrcholů omezujícího grafu. Instanci třídy předáme kopii grafu jako parametr. Následně využijeme její funkce \icode{computeModel}, která sestrojí mapu určující ohodnocení vrcholů následujícím způsobem.
 
 Nejprve přidáme do grafu nový vrchol a propojí ho přes nulové hrany se všemi ostatními vrcholy. Následně spustíme hledání nejkratší cesty z tohoto nově přidaného vrcholu do všech ostatních vrcholů. Jelikož model hledáme pouze ve splnitelných ohodnoceních, graf zaručeně neobsahuje záporné cykly a délka nejkratší cesty je pro každý vrchol dobře definovaná. Cesty hledáme klasickým Bellman-Fordovým algoritmem, po jehož skončení si nalezené délky uložíme do mapy. Na závěr zkontrolujeme, zda se v grafu nevyskytuje vrchol symbolizující proměnnou $zero$ (viz.~sekce \ref{stp}). Pokud ano, všechny hodnoty v mapě posuneme tak, aby vrchol $zero$ měl nulové ohodnocení.
-%% TODO add code snippet
-
+\begin{code}
+void STPModel::computeModel() {
+	VertexRef start = addStartingPoint();
+	bellmanFord(start);
+	shiftZero();
+}
+\end{code}
 Není těžké ukázat, že vezmeme-li negace nalezených délek, dostaneme splňující ohodnocení vrcholů. Z tvrzení \ref{tvr:posun} pak vyplývá, že závěrečný posun nám splnitelnost nerozbije.
 
 Jelikož instanci \icode{STPModel} potřebujeme vždy nejvýše jednu, navíc ji potřebujeme vytvořit až na samotný závěr výpočtu, ukládáme si ji pouze ve formě ukazatele (který má v průběhu výpočtu hodnotu \icode{nullptr}). Protože navíc přístup k tomuto ukazateli potřebuje pouze třída \icode{STPSolver}, využíváme chytrý ukazatel typu \icode{std::unique\_ptr}.
