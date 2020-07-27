@@ -2,6 +2,6 @@
 
 \Author{Václav Luňák}
 \Title{STP řešič pro OpenSMT}
-\Keywords{klíčová slova\sep další taková\sep ještě jiná}
+\Keywords{SMT\sep OpenSMT\sep STP\sep diferenční logika\sep DPLL(T)}
 \Subject{Abstrakt práce}
 \Publisher{Univerzita Karlova}
