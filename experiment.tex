@@ -4,7 +4,7 @@
 
 Pro účely testování jsme využili proces soutěže SMT-COMP\footnote{\url{https://smt-comp.github.io/}}, která od roku 2005 každoročně srovnává nejlepší současné SMT řešiče na velkém množství různorodých testů z~knihovny SMT-LIB. Náš řešič porovnáváme v~kategorii diferenční logiky s~řešiči, které se účastnily soutěže v~roce 2020. Konkrétně to jsou řešiče CVC4, MathSAT\,5, SMTInterpol, veriT, Yices a~z3.
 
-Náš experiment proběhl na 834 testovacích vstupech knihovny SMT-LIB určených pro diferenční logiku. Testy se pohybují v~rozsahu od desítek klauzulí s~jednotkami proměnných až po statisíce klauzulí s~desítkami tisíc proměnných. Samotné výpočty probíhaly na počítačích clusteru StarExec\footnote{\url{https://www.starexec.org/}}, iniciativy vzniklé za účelem jednoduššího vytváření, vyhodnocování a~sdílení testů pro různé druhy logických řešičů. Počítače, jež jsou součástí clusteru, obsahují $2.4\rm GHz$ procesor Intel\textregistered\ Xeon\textregistered\ E5-2609, cca.~$250\,\rm GB$ operační paměti a~používají operační systém CentOS verze 7.7 běžící na linuxovém jádře verze 3.10.0
+Náš experiment proběhl na 834 testovacích vstupech knihovny SMT-LIB určených pro diferenční logiku nad celými čísly. Testy se pohybují v~rozsahu od desítek klauzulí s~jednotkami proměnných až po statisíce klauzulí s~desítkami tisíc proměnných. Samotné výpočty probíhaly na počítačích clusteru StarExec\footnote{\url{https://www.starexec.org/}}, iniciativy vzniklé za účelem jednoduššího vytváření, vyhodnocování a~sdílení testů pro různé druhy logických řešičů. Počítače, jež jsou součástí clusteru, obsahují $2.4\rm GHz$ procesor Intel\textregistered\ Xeon\textregistered\ E5-2609, cca.~$250\,\rm GB$ operační paměti a~používají operační systém CentOS verze 7.7 běžící na linuxovém jádře verze 3.10.0
 
 Omezení stanovená pro testy jsme rovněž převzali z~SMT-COMP. Každý test byl spuštěn s~limitem 1200~sekund reálného času, respektive 4800 sekund procesorového času a~s~omezením na $60\,\rm GB$ operační paměti. Výpočet jsme prohlásili za úspěšně dokončený, pokud skončil v~rámci daných limitů a~vrátil korektní odpověď. Jakmile byl některý z~limitů porušen, popřípadě nebyla-li vrácená odpověď korektní, označili jsme test za neúspěšný. Jako primární srovnávací kritérium pak používáme počet úspěšně vyřešených testů a~sekundárním kritériem je celkový čas výpočtů (výpočty ukončené z~důvodu vypršení času jsou započítány s~časem $1200\,\rm s$).
 
@@ -12,7 +12,7 @@ Omezení stanovená pro testy jsme rovněž převzali z~SMT-COMP. Každý test b
 
 Přehled výsledků nahlédneme v~tabulce níže, následující strana ilustruje srovnání řešičů s~OpenSMT na úspěšných testech (osy mají logaritmické měřítko a~označují reálný čas výpočtu v~sekundách). Dodejme ještě, že žádný z~testů neskončil nesprávným ohodnocením a~všechny testy se vešly do paměťového limitu --- veškerá předčasná ukončení byla způsobena překročením omezení pro reálný čas.
 
-\begin{table}[h]
+\begin{table}[ht]
 	\centering
 	\begin{tabular}{l@{\hspace{1cm}} D{.}{,}{3.0} D{.}{,}{6.1} D{.}{,}{3.0} D{.}{,}{3.0} D{.}{,}{3.0}}
 		\toprule  
@@ -32,7 +32,6 @@ Přehled výsledků nahlédneme v~tabulce níže, následující strana ilustruj
 	\end{tabular}
 	%\caption{Srovnání SMT řešičů}
 \end{table}
-
 \begin{figure}
 	\centering
 		\includegraphics[width=0.49\linewidth]{comp_yices}

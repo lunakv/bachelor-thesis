@@ -182,6 +182,8 @@ Mezi soubory přiloženými k~této práci můžeme nalézt
 	\item soubor \icode{patch} --- patch oproti větvi master k~25. 7. 2020 obsahující všechny změny provedené v~této práci
 	\item soubor \icode{benchmark.ods} --- tabulka s~podrobnými daty o~testech popisovaných v~kapitole \ref{experiment}
 	\item soubor \icode{queen-4.smt2} --- ukázkový vstup řešiče, rozebraný v~příloze \ref{priklad}
+	\item soubor \icode{long.smt2} --- ukázkový příklad delšího strojově generovaného vstupu
+	\item adresář \icode{validator} --- skript pro automatickou kontrolu korektnosti vypočteného modelu. Jedná se o~modifikovanou verzi programu použitého v~SMT-COMP\footnote{\url{https://github.com/SMT-COMP/postprocessors/tree/master/model-validation-track}}.
 \end{itemize}
 
 \section{Soubory náležící práci}
@@ -208,16 +210,16 @@ V~rámci této práce jsme pracovali se zdrojovým kódem v~souborech
 
 V~této příloze ilustrativně předvedeme převod problému $n$ dam do formule diferenční logiky a~jeho vyřešení SMT řešičem. Náš ukázkový příklad pracuje s~verzí problému obsahující 4 dámy na šachovnici $4\times 4$.
 
-K~zápisu problému potřebujeme čtyři celočíselné proměnné, $x_0, x_1, x_2, x_3$, určující sloupce obsahující dámu v~daném řádku, a~jednu referenční proměnnou $zero$.
-\newpage %% TODO be careful
+K~zápisu problému potřebujeme čtyři celočíselné proměnné, $x_0, x_1, x_2, x_3$. Proměnná $x_i$ určuje, v~jakém sloupci se vyskytuje dáma na $i$-tém řádku.
+
 Na proměnné se pak vztahují tři různé druhy omezení ($i, j \in \{0\dots3\}$):
 \begin{itemize}
-	\item $0 \leq x_i - zero \leq 3$
+	\item $0 \leq x_i \leq 3$
 	\item $x_i \neq x_j$, respektive $(x_i - x_j \geq 1) \lor (x_j - x_i \geq 1)$
 	\item $x_i - x_j \neq \pm(i-j)$.
 \end{itemize}
 
-První skupina omezení zaručuje, že dámy umisťujeme na platné sloupce šachovnice. Druhá a~třetí zajišťují, že dvě různé dámy nejsou na stejém sloupci, respektive na stejné diagonále. Chceme-li navíc, aby hodnoty proměnných přesně odpovídaly sloupcům šachovnice, přidáme do formule term $zero = 0$. Převod těchto klauzulí do jazyka SMT-LIB můžeme vidět v~souboru \icode{queen-4.smt2}. Po spuštění řešiče na tomto vstupu obdržíme následující výstup.
+První skupina omezení zaručuje, že dámy umisťujeme na platné sloupce šachovnice. Druhá a~třetí zajišťují, že dvě různé dámy nejsou na stejém sloupci, respektive na stejné diagonále. Převod těchto klauzulí do jazyka SMT-LIB můžeme vidět v~souboru \icode{queen-4.smt2}. Po spuštění řešiče na tomto vstupu obdržíme následující výstup.
 \begin{code}
 > opensmt queen-4.smt2
 sat
@@ -226,10 +228,16 @@ sat
 (define-fun x1 () Int 0)
 (define-fun x2 () Int 3)
 (define-fun x3 () Int 1)
-(define-fun zero () Int 0)
 )
 \end{code}
-První řádek výstupu udává, že řešič označil formuli jako splnitelnou ($4\times4$ je nejmenší šachovnice, pro kterou existuje řešení). Následuje nalezené ohodnocení všech uvedených proměnných. V~našem případě přitom není těžké ověřit, že je uvedené ohodnocení korektní.
+První řádek výstupu udává, že řešič označil formuli jako splnitelnou ($4\times4$ je nejmenší šachovnice, pro kterou existuje řešení). Následuje nalezené ohodnocení všech uvedených proměnných. V~našem případě přitom není těžké ověřit, že je uvedené ohodnocení korektní. Nalezený model ukazuje obrázek \ref{fig:queens}. Pro ověření korektnosti větších problémů, u~kterých je manuální kontrola neproveditelná, doporučujeme automatický validátor modelu přiložený k~této práci. 
+
+\begin{figure}[b]
+	\centering
+	\includegraphics[width=0.4\textwidth]{queens.pdf}
+	\caption{Řešení problému čtyř dam}
+	\label{fig:queens}
+\end{figure}
 
 \openright
 \end{document}

@@ -5,7 +5,7 @@ Abychom mohli přistoupit k~popisu našeho řešení, musíme nejprve definovat 
 
 Problém splnitelnosti booleovské formule, označovaný též zkratkou SAT, patří k~nejznámějším problémům z~oboru matematické logiky. V~roce 1971 se stal prvním dokazatelně NP-úplným problémem \cite{Cook71} a~v~důsledku toho i~užitečným nástrojem pro teorii složitosti, pomocí něhož lze rozhodovat o~NP-úplnosti dalších problémů.\footnote{Příklady převodů NP-úplných problémů na SAT můžeme nalézt např. v~\cite[kapitola 19]{Mares17}}
 
-V~praktickém použití však SAT naráží na své limitované vyjadřovací schopnosti. Práce s~booleovskými proměnnými, omezenými pouze na dvě různé hodnoty, může komplikovat převod reálného problému do tvaru booleovské formule. Potřeba užití komplexnějších atomů tak vedla ke zobecnění SAT zvanému \emph{Satisfiability modulo theories} (SMT).
+V~praktickém použití však SAT může narážet na své limitované vyjadřovací schopnosti. Práce s~booleovskými proměnnými, omezenými pouze na dvě různé hodnoty, může komplikovat převod reálného problému do tvaru booleovské formule. Potřeba užití komplexnějších atomů tak vedla ke zobecnění SAT zvanému \emph{Satisfiability modulo theories} (SMT).
 
 Jak název napovídá, SMT rozšiřuje SAT o~jazyk logických teorií (konkrétně teorií predikátové logiky prvního řádu). Máme-li nějakou teorii $T$, pak instancí SMT rozumíme formuli jazyka této teorie. Jiným pohledem můžeme na instanci SMT nahlížet jako na booleovskou formuli, ve které jsme nahradili některé binární proměnné za predikáty obsažené v~$T$. Problému vztaženému k~této konkrétní teorii pak říkáme \emph{SMT s~ohledem na $T$}.
 
@@ -15,7 +15,11 @@ Jako příklady teorií tradičně řešených v~SMT lze uvézt teorii lineárn�
 
 Jedním ze základních podproblémů vyskytujícím se v~takřka všech plánovacích problémech je takzvaný \emph{Simple Temporal Problem} (STP). STP poprvé postulovali v~roce 1991 Dechter, Meiri a~Pearl \cite{Dechter91} a~od té doby našel široká využití jak v~informatických oblastech, tak v~oborech od medicíny \cite{Anselma06} po vesmírný let \cite{Fukunaga97}.
 
-Vstupem STP je množina rozdílových omezení, to jest nerovnic tvaru $$x - y \leq c,$$ kde $x$ a~$y$ jsou proměnné a~$c$ je konstanta. V~závislosti na tom, jakou verzi problému řešíme, přitom pracujeme buď s~celočíselnými, nebo s~reálnými hodnotami. Výstupem tohoto problému je pak rozhodnutí, zda existuje takové ohodnocení proměnných, že jsou splněna všechna zadaná omezení. V~rozšíření problému pak můžeme požadovat na výstupu i~nějaké splňující ohodnocení, pokud existuje, případně nalezení pokud možno co nejmenší podmnožiny omezení, která způsobuje nesplnitelnost problému.
+Vstupem STP je množina rozdílových omezení, to jest nerovnic tvaru
+\begin{equation}\label{eq:diff}
+x - y \leq c,
+\end{equation}
+kde $x$ a~$y$ jsou proměnné a~$c$ je konstanta. V~závislosti na tom, jakou verzi problému řešíme, přitom pracujeme buď s~celočíselnými, nebo s~reálnými hodnotami. Výstupem tohoto problému je pak rozhodnutí, zda existuje takové ohodnocení proměnných, že jsou splněna všechna zadaná omezení. V~rozšíření problému pak můžeme požadovat na výstupu i~nějaké splňující ohodnocení, pokud existuje, případně nalezení pokud možno co nejmenší podmnožiny omezení, která způsobuje nesplnitelnost problému.
 
 Na první pohled se může zdát pevně daný tvar nerovnic příliš omezující, uvědomme si však, že do této formy můžeme převést několik dalších druhů nerovnic. Nejsnáze zahrneme do problému omezení tvaru $x - y = c$; ty stačí jednoduše nahradit nerovnicemi $x - y \leq c$ a~$x - y \geq c$.
 
@@ -34,5 +38,5 @@ V~kontextu SMT pak teorii obsahující výše popsané nerovnice nazveme \emph{t
 
 \section{OpenSMT}
 
-OpenSMT je moderní SMT řešič, jehož vznik a~vývoj zaštiťuje \emph{Formal Verification and Security Lab} univerzity v~Luganu\footnote{\url{http://verify.inf.usi.ch/FVBTR}}. Byl vytvořen jako nástroj sloužící k~výzkumu nových postupů formální verifikace a~k~podpoření používání SMT řešičů společně s~dalšími verifikačními nástroji. Poskytuje proto jednoduchou infrastrukturu pro vytváření nových řešičů teorie, která je použitelná i~pro vývojáře nespecializující se v~oboru formální verifikace. Současně se aktivně vyvíjí jeho druhá verze, OpenSMT2.
+OpenSMT je moderní SMT řešič, jehož vznik a~vývoj zaštiťuje \emph{Formal Verification and Security Lab} univerzity v~Luganu\footnote{\url{http://verify.inf.usi.ch/FVBTR}}. Byl vytvořen jako nástroj sloužící k~výzkumu nových postupů formální verifikace a~k~podpoření používání SMT řešičů společně s~dalšími verifikačními nástroji. Poskytuje proto jednoduchou infrastrukturu pro vytváření nových řešičů teorie, která je použitelná i~pro vývojáře nespecializující se v~oboru formální verifikace. Současně se aktivně vyvíjí jeho druhá verze, OpenSMT2. V~rámci tohoto vývoje dosud v~OpenSMT chyběl specializovaný řešič pro diferenční logiku. Naším cílem bylo do něj tuto důležitou chybějící část doplnit.
 

@@ -18,7 +18,7 @@ Ve prospěch líných SMT řešičů svědčí fakt, že pro danou teorii často
 
 V~roce 2004 navrhli Gazinger a~kol. nový přístup zvaný \emph{DPLL(T)} \cite{Gazinger04}. DPLL($T$) má koncepčně blíže k~línému vyhodnocování, integruje však těsněji hlavní řešič s~řešiči teorie. Místo toho, aby využíval řešiče teorie až po nalezení nějakého ohodnocení, průběžně mu oznamuje dosavadní rozhodnutí a~periodicky se ho ptá na splnitelnost právě dosazené konjunkce. Řešič teorie pak kromě kontroly splnitelnosti také oznamuje hlavnímu řešiči důsledky této konjunkce. Tím jsme schopni dříve opustit větve rozhodovacího stromu nekonzistentní s~teorií. 
 
-V~jádru tohoto přístupu stojí obecný DPLL($X$) engine, využívající DPLL \cite{Davis60} postupu pro SAT řešiče. Tento engine nemusí mít žádné znalosti o~konkrétní teorii. Dosazením řešiče \Solver dané teorie $T$ za parametr $X$ pak vytvoříme konkrétní instanci DPLL($T$). Hlavní engine přitom v~průběhu výpočtu komunikuje se \Solver.
+V~jádru tohoto přístupu stojí obecný DPLL($X$) engine\footnote{Autoři práce si nejsou vědomi vhodného českého překladu, používají proto všeobecně známý anglický termín v~jeho nezměněné podobě.} , využívající DPLL \cite{Davis60} postupu pro SAT řešiče. Tento engine nemusí mít žádné znalosti o~konkrétní teorii. Dosazením řešiče \Solver dané teorie $T$ za parametr $X$ pak vytvoříme konkrétní instanci DPLL($T$). Hlavní engine přitom v~průběhu výpočtu komunikuje se \Solver.
 
 Stejně jako u~líných řešičů, v~DPLL($T$) abstrahuje \Solver literály teorie za běžné booleovské proměnné, se kterými může DPLL($X$) pracovat. Než tedy začne samotný výpočet, musí být \Solver poskytnuta vstupní formule, aby bylo možné provést tuto transformaci. Jakmile pak engine během výpočtu rozhodne o~pravdivostní hodnotě některého abstrahovaného literálu, okamžitě toto rozhodnutí oznámí řešiči teorie. Ten musí rozhodnout, zda je ohodnocení konzistentní s~předešlými ohodnocenými literály. Může navíc objevit nějaké důsledky tohoto ohodnocení v~teorii. Výsledek \Solver předá zpět DPLL($X$), který podle něj určí další postup. 
 
@@ -41,18 +41,19 @@ Při použití tohoto rozhranní přitom \Solver nemusí nic vědět o~implement
 Velkou rozšířenost STP můžeme mimo jiné přisoudit tomu, že jsme schopni ho efektivně řešit. Jelikož se problém skládá výlučně z~lineárních omezení, mohli bychom na první pohled využít metod lineárního programování, jako je například simplexový algoritmus. Tyto metody jsou schopny řešit i~mnohem komplexnější problémy, avšak s~jejich výpočetní silou se pojí znatelně vyšší časová náročnost. Algoritmy specializované na STP se proto už od svého počátku \cite[Kapitola 2]{Dechter91} obracejí jiným směrem, a~to k~formalizmu teorie grafů. Přestože v~průběhu let vzikly různé metody řešení tohoto problému, všechny fungují na základě převedení množiny omezení na takzvaný \emph{omezující graf}.
 
 \begin{definice}[Omezující graf]
-	Nechť $\Pi$ je množina rozdílových omezení. Omezujícím grafem této množiny rozumíme hranově ohodnocený orientovaný graf G takový, že vrcholy G tvoří proměnné vyskytující se v~$\Pi$ a~každému omezení $(x-y \leq c) \in \Pi$ odpovídá v~G hrana $\langle x,y\rangle$ s~ohodnocením $c$.
+	Nechť $\Pi$ je množina rozdílových omezení (\ref{eq:diff}). Omezujícím grafem této množiny rozumíme hranově ohodnocený orientovaný graf G takový, že vrcholy G tvoří proměnné vyskytující se v~$\Pi$ a~každému omezení $(x-y \leq c) \in \Pi$ odpovídá v~G hrana $\langle x,y\rangle$ s~ohodnocením $c$.
 \end{definice}
 \begin{pozn}
 	Hranu $\langle x,y\rangle$ s~ohodnocením $c$ budeme značit $x \xrightarrow{c} y$. Orientovanou cestu z~$x$ do $y$ se součtem ohodnocení $k$ pak budeme značit $x \xrightarrow{k*} y$.
 \end{pozn}
 
-Pro úplnost dodejme, že dvojice proměnných se může vyskytovat v~libovolně mnoha omezeních. Omezující graf je tedy formálně orientovaným multigrafem. Vzhledem k~vzájemné bijekci mezi hranami grafu a~nerovnicemi problému budeme v~průběhu práce volně přecházet mezi oběma reprezentacemi.
+Pro úplnost dodejme, že dvojice proměnných se může vyskytovat v~libovolně mnoha omezeních. Omezující graf je tedy formálně orientovaným multigrafem. Vzhledem k~vzájemné bijekci mezi hranami grafu a~nerovnicemi problému budeme v~průběhu práce volně přecházet mezi oběma reprezentacemi. Příklad převedení množiny rozdílových omezení na odpovídající omezující graf ukazuje obrázek \ref{fig:graph}.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{graph_example}
 	\caption{Převod STP problému nad $\Z$ na omezující graf}
+	\label{fig:graph}
 \end{figure}
 
 Převod do formy grafu je pro řešení problému zásadní. Umožňuje nám totiž formulovat následující klíčové tvrzení.
@@ -64,12 +65,13 @@ Převod do formy grafu je pro řešení problému zásadní. Umožňuje nám tot
 	Najdeme-li v~omezujícím grafu záporný cyklus obsahující vrchol $x$, sečtením všech nerovnic vyskytujících se v~tomto cyklu dostaneme $x-x \leq c < 0$, z~čehož je jasně problém nesplnitelný. Je-li na druhou stranu problém nesplnitelný, obsahuje $\Pi$ nějakou nerovnici $x - y \leq c$ takovou, že z~$\Pi$ vyplývá $y - x < -c$. Tato implikace znamená, že v~omezujícím grafu existuje cesta $y \xrightarrow{k*} x$ taková, že $k < -c$. Hrana $x \xrightarrow{c} y$ pak společně s~touto cestou tvoří záporný cyklus.
 \end{proof}
 
-Hledání splnitelnosti STP jsme tedy schopni převést na hledání záporného cyklu v~grafu. To je problém, který dokážeme efektivně řešit. Využít můžeme např. některý algoritmus na hledání nejkratší cesty, kupříkladu Floydův-Warshallův algoritmus operující v~čase $\Theta(\abs{V}^3)$ nebo Bellmanův-Fordův algoritmus, který má časovou složitost $\Theta(\abs{V}\cdot\abs{E})$.
+Hledání splnitelnosti STP jsme tedy schopni převést na hledání záporného cyklu v~grafu (příklad převodu ukazuje obrázek \ref{fig:unsat}). To je problém, který dokážeme efektivně řešit. Využít můžeme např. některý algoritmus na hledání nejkratší cesty, kupříkladu Floydův-Warshallův algoritmus operující v~čase $\Theta(\abs{V}^3)$ nebo Bellmanův-Fordův algoritmus, který má časovou složitost $\Theta(\abs{V}\cdot\abs{E})$.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{graph_unsat}
 	\caption{Rozhodnutí o~nesplnitelnosti STP nalezením záporného cyklu}
+	\label{fig:unsat}
 \end{figure}
 
 Tyto algoritmy však trpí pro náš účel zásadním nedostatkem. Jejich použití znamená, že po každém přidání nové hrany do grafu musí znovu proběhnout celé prohledávání. Tento postup není vhodný pro použití v~SMT řešičích, ve kterých je kladen velký důraz na inkrementalitu. V~následující sekci tedy podrobně rozebereme několik postupů pro řešení problémů SMT s~ohledem na DL a~motivujeme výběr námi použitého algoritmu. 
@@ -85,4 +87,4 @@ S~ohledem na tyto požadavky vzniklo několik algoritmů pro řešení SMT s~ohl
 
 Jako možnou alternativu uveďme algoritmus, který prezentovali Wang a~kol. \cite{Wang05} a~jejichž řešič se koncepčně od našeho přístupu značně liší. Vychází z~Bellman-Fordova algoritmu, využitelného mimo jiné k~detekci záporných cyklů. Pomocí několika klíčových pozorování pak odstraňuje jeho nedostatky pro použití v~SMT řešičích. Zásadní změna spočívá v~inkrementalitě řešení. Běžný Bellman-Fordův algoritmus by musel pokaždé relaxovat všechny hrany grafu nezávisle na předchozích výpočtech. Jak ale ukázali autoři \cite{Wang05}, pokud nepotřebujeme hledat nutně nejkratší cesty, nemusí vrcholy grafu nutně začínat s~nekonečným potenciálem. Jejich řešič si tedy může ukládat délky nalezené v~jednom průběhu relaxačního algoritmu a~použít je jako výchozí hodnoty pro následující průběh. Tím se v~praxi podstatně sníží počet relaxací nutných ke stabilizování všech vrcholů. Tento proces také umožňuje efektivní backtracking a~hledání splňujícího modelu.
 
-Pro tuto práci jsme nakonec zvolili postup, který uvádějí Nieuwenhuis a~Olivieras \cite{Nieuwenhuis05}, z~několika důvodů. Jedním byla myšlenka vyčerpávající propagace, jejíž použitelnost v~rámci OpenSMT jsme chtěli vyzkoušet. Z~implementační strany nás zaujala nás také aktivnější role řešiče teorie v~tomto algoritmu; zatímco řešič popsaný v~předchozím odstavci je v~zásadě pasivní, v~námi zvoleném řešiči probíhá oboustrannější komunikace se zbytkem frameworku. Jelikož jsou navíc oba přístupy výkonostně srovnatelné \cite{Wang05}, naše rozhodnutí by nemělo negativně ovlivnit efektivitu řešení. Využití výše uvedeného řešiče a~jeho srovnání se stávající implementací, popřípadě vytvoření zcela nového způsobu řešení DL v~rámci DPLL($T$), vidíme jako možná budoucí rozšíření této práce.
+Pro tuto práci jsme nakonec zvolili postup, který uvádějí Nieuwenhuis a~Olivieras \cite{Nieuwenhuis05}, z~několika důvodů. Jedním byla myšlenka vyčerpávající propagace, jejíž použitelnost v~rámci OpenSMT jsme chtěli vyzkoušet. Z~implementační strany nás zaujala také aktivnější role řešiče teorie v~tomto algoritmu; zatímco řešič popsaný v~předchozím odstavci je v~zásadě pasivní, v~námi zvoleném řešiči probíhá oboustrannější komunikace se zbytkem frameworku. Jelikož jsou navíc oba přístupy výkonostně srovnatelné \cite{Wang05}, naše rozhodnutí by nemělo negativně ovlivnit efektivitu řešení. Využití výše uvedeného řešiče a~jeho srovnání se stávající implementací, popřípadě vytvoření zcela nového způsobu řešení DL v~rámci DPLL($T$), vidíme jako možná budoucí rozšíření této práce.
