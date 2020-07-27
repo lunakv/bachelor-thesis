@@ -1,2 +1,12 @@
 \chapter*{Závěr}
 \addcontentsline{toc}{chapter}{Závěr}
+
+V~rámci práce jsme pro OpenSMT vytvořili řešič diferenční logiky nad množinou celých čísel. Seznámili jsme se s~problémem STP, rozebrali jeho vlastnosti a~ukázali jeho transformaci na grafový problém. Zvážili jsme způsoby jeho řešení v~kontextu SMT řešičů a~analyzovali existující algoritmy navržené pro framework DPLL($T$). Popsali jsme metodu vyčerpávající propagace teorie a~její aplikaci pro diferenční logiku.
+
+S~ohledem na tyto poznatky jsme pak implementovali samotný řešič teorie. Naším cílem přitom bylo vytvořit řešič, který bude dobře integrován se zbytkem frameworku a~dosáhne výkonu srovnatelného s~ostatními moderními SMT řešiči. Výsledek naší práce jsme s~těmito řešiči experimentálně srovnali a~ukázali jsme, že se nám podařilo daného cíle dosáhnout --- OpenSMT je srovnatelné či dokonce rychlejší než některé z~nejznámějších SMT řešičů současnosti. Nedosahuje zatím účinnosti těch naprosto nejrychlejších, na jejichž vývoji se soustavně podílí desítky dedikovaných výzkumníků. Věříme ale, že poskytuje dobrý základ, který už v~současné formě nabízí rozumnou alternativu k~současným řešičům a~jehož využitelnost bude růst s~budoucími zlepšeními. 
+
+\subsection*{Možná budoucí rozšíření}
+
+Hlavním úkolem v~nejbližší budoucnosti frameworku je rozšíření našeho řešiče o~podporu problémů nad doménou reálných čísel. S~využitím poznatků uvedených v~sekci~\ref{int_v_real} a~datových struktur již existujících v~OpenSMT máme za to, že by toto rozšíření nemělo být příliš náročné. Většina kódu existujícího v~implementaci celočíselné verze je totiž přenositelná mezi oběma variantami.
+
+Dalším možným směrem budoucího vývoje je práce na zlepšení výkonnosti stávajícího řešiče. Jedním možným směrem této práce by byla analýza implementace použitého algoritmu. Jako příklad uveďme bližší průzkum možnosti použití vícevláknových procesů. Naše zběžné testování tyto přístupy sice zamítlo, ale podrobnější výzkum a~testování by mohly odhalit možnosti ke zrychlení řešiče. Druhou možností pro další výzkum v~tomto směru by pak mohlo být také využití jiných algoritmů v~rámci OpenSMT, ať už by se jednalo o~implementaci již existujících algoritmů, nebo o~vytvoření zcela nových postupů.
