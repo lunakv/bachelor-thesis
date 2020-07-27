@@ -1,6 +1,7 @@
 \chapter{Vývojová dokumentace}
+V této kapitole se budeme detailněji věnovat implementaci našeho řešení. Rozebereme její strukturu, jednotlivé části programu a rozhodnutí, která bylo potřeba učinit. Po přečtení kapitoly by měl být čtenář schopen orientovat se v našem řešení a rozumět účelu jeho jednotlivých částí. Podrobně též popíšeme zapojení řešiče do infrastruktury OpenSMT.
 
-%Tato kapitola detailně popisuje implementaci našeho programu. V každé sekci podrobně rozebereme jednu část řešení, rozhodnutí vedoucí k její implementaci a případné problémy, na které jsme narazili během vývoje.
+Vzhledem k povaze řešení jakožto interní součásti většího frameworku neobsahuje tato práce uživatelskou dokumentaci. Návod na spuštění OpenSMT a názornou ukázku jeho použití na problému využívajícím náš řešič nalezneme v přílohách \ref{content}~a~\ref{priklad}.
 \section{Datové struktury}\label{data}
 
 \subsection*{Struktury OpenSMT}
@@ -23,6 +24,8 @@ assert( n == 4 );
 PTRef x = term[1];
 assert( logic.isNumVar(x) );
 \end{code}
+
+Je vhodné zmínit, že za dobu vývoje OpenSMT v~něm vzniklo několik implementací základních datových struktur. Hojně užívaným příkladem je třída \icode{vec}, reprezentující běžný vektor. Vyjma malých rozdílů API a~údajné vyšší efektivity na primitivních typech se tyto třídy výrazně neliší od implementací ze standardní knihovny. Konkrétně třída \icode{vec} je navíc omezena skutečností, že jejími prvky nemohou být typy obsahující odkazy (vyjímkou z~tohoto pravidla je zvlášť implementovaný \icode{vec$\langle$vec$\langle$T$\rangle\rangle$}). Za účelem konzistence se zbytkem frameworku jsme se přesto rozhodli využívat tyto lokální implementace struktur všude, kde je to možné. 
 
 \subsection*{Struktury řešiče}
 Nejdůležitější datovou strukturou našeho řešiče je \icode{Edge}. V~té jsou uloženy informace o~jedné hraně omezujícího grafu. Konkrétně tedy obsahuje reference na její vstupní a~výstupní vrchol, ohodnocení, odkaz na svou negaci a~informaci o~tom, kdy byla přidána do omezujícího grafu. Po vzoru frameworku přitom zbytek řešiče nepracuje přímo s~těmito strukturami, ale s~jejich referencemi \icode{EdgeRef}, které opět obsahují pouze jednoznačný numerický identifikátor. Samotné hrany se pak nacházejí jen v~centrálním úložišti, které tvoří třída \icode{STPStore}. Ta zařizuje zejména tvorbu nových hran a~převod z~\icode{EdgeRef} na \icode{Edge\&}. Použit je i~protějšek k~\icode{EdgeRef} pro vrcholy, struktura \icode{VertexRef}. Jelikož se však s~vrcholy nepojí žádná informace, nejedná se o~odkaz na další strukturu, ale pouze o~symbolické reference, sloužící pro vzájemné rozlišení jednotlivých vrcholů.
@@ -64,8 +67,6 @@ public:
 	\caption{Závislosti mezi strukturami řešiče}
 \end{figure}
 
-Je vhodné zmínit, že za dobu vývoje OpenSMT v~něm vzniklo několik implementací základních datových struktur. Hojně užívaným příkladem je třída \icode{vec}, reprezentující běžný vektor. Vyjma malých rozdílů API a~údajné vyšší efektivity na primitivních typech se tyto třídy výrazně neliší od implementací ze standardní knihovny. Konkrétně třída \icode{vec} je navíc omezena skutečností, že jejími prvky nemohou být typy obsahující odkazy (vyjímkou z~tohoto pravidla je zvlášť implementovaný \icode{vec$\langle$vec$\langle$T$\rangle\rangle$}). Za účelem konzistence se zbytkem frameworku jsme se přesto rozhodli využívat tyto lokální struktury všude, kde je to možné. 
-\newpage
 \section{Přidávání literálů}\label{add}
 
 Na samotném začátku výpočtu se OpenSMT postupně pro každý term zeptá řešiče, zda se jedná o~literál jeho teorie. Jelikož tento proces slouží primárně k~jejich odlišení běžných booleovských termů, nezkoumáme do hloubky struktury termu, ale provádíme jen povrchovou kontrolu. Pokud předpokládáme, že framework použije náš řešič jen pro odpovídající teorii, je taková kontrola dostačující.
