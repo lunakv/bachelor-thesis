@@ -176,7 +176,7 @@ void STPModel::computeModel() {
 	shiftZero();
 }
 \end{code}
-Není těžké ukázat, že vezmeme-li negace nalezených délek, dostaneme splňující ohodnocení vrcholů. Z~tvrzení \ref{tvr:posun} pak vyplývá, že závěrečný posun nám splnitelnost nerozbije.
+Není těžké ukázat, že vezmeme-li negace nalezených délek, dostaneme splňující ohodnocení vrcholů. Z~tvrzení \ref{tvr:posun} pak vyplývá, že závěrečný posun splnitelnost neporuší.
 
 Jelikož instanci \icode{STPModel} potřebujeme vždy nejvýše jednu, navíc ji potřebujeme vytvořit až na samotný závěr výpočtu, ukládáme si ji pouze ve formě ukazatele (který má v~průběhu výpočtu hodnotu \icode{nullptr}). Protože navíc přístup k~tomuto ukazateli potřebuje pouze třída \icode{STPSolver}, využíváme chytrý ukazatel typu \icode{std::unique\_ptr}.
 
