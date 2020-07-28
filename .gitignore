@@ -288,3 +288,6 @@ TSWLatexianTemp*
 
 # vlna backup files
 *.te~
+
+# VSCode environment
+.vscode/
