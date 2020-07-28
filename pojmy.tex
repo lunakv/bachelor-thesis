@@ -5,11 +5,11 @@ Abychom mohli přistoupit k~popisu našeho řešení, musíme nejprve definovat 
 
 Problém splnitelnosti booleovské formule, označovaný též zkratkou SAT, patří k~nejznámějším problémům z~oboru matematické logiky. V~roce 1971 se stal prvním dokazatelně NP-úplným problémem \cite{Cook71} a~v~důsledku toho i~užitečným nástrojem pro teorii složitosti, pomocí něhož lze rozhodovat o~NP-úplnosti dalších problémů.\footnote{Příklady převodů NP-úplných problémů na SAT můžeme nalézt např. v~\cite[kapitola 19]{Mares17}}
 
-V~praktickém použití však SAT může narážet na své limitované vyjadřovací schopnosti. Práce s~booleovskými proměnnými, omezenými pouze na dvě různé hodnoty, může komplikovat převod reálného problému do tvaru booleovské formule. Potřeba užití komplexnějších atomů tak vedla ke zobecnění SAT zvanému \emph{Satisfiability modulo theories} (SMT).
+Přestože je SAT v~praxi často používaný, v~některých doménách může narážet na limitace svých vyjadřovacích schopností. Práce s~booleovskými proměnnými, omezenými pouze na dvě různé hodnoty, může komplikovat převod reálného problému do tvaru booleovské formule. Potřeba užití komplexnějších atomů tak vedla ke zobecnění SAT zvanému \emph{Satisfiability modulo theories} (SMT).
 
 Jak název napovídá, SMT rozšiřuje SAT o~jazyk logických teorií (konkrétně teorií predikátové logiky prvního řádu). Máme-li nějakou teorii $T$, pak instancí SMT rozumíme formuli jazyka této teorie. Jiným pohledem můžeme na instanci SMT nahlížet jako na booleovskou formuli, ve které jsme nahradili některé binární proměnné za predikáty obsažené v~$T$. Problému vztaženému k~této konkrétní teorii pak říkáme \emph{SMT s~ohledem na $T$}.
 
-Jako příklady teorií tradičně řešených v~SMT lze uvézt teorii lineární aritmetiky (LA), teorii neinterpretovaných funkcí s~rovností (EUF), či teorii diferenční logiky (DL), kterou se budeme zabývat ve zbytku práce.
+Jako příklady teorií tradičně řešených v~SMT lze uvézt teorii lineární aritmetiky (LA), teorii neinterpretovaných funkcí s~rovností (EUF) či teorii diferenční logiky (DL), kterou se budeme zabývat ve zbytku práce.
 
 \section{Simple Temporal Problem}\label{stp}
 
