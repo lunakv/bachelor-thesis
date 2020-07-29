@@ -190,21 +190,24 @@ Mezi soubory přiloženými k~této práci můžeme nalézt
 V~rámci této práce jsme pracovali se zdrojovým kódem v~souborech
 \begin{itemize}
 	\tt
-	\item src/api/Interpret.cc\footnotemark
-	\item src/logics/IDLTheory.cc\footnotemark[\value{footnote}]
-	\item src/logics/Theory.h\footnotemark[\value{footnote}]
-	\item src/tsolvers/IDLTHandler.\{h|cc\}\footnotemark[\value{footnote}]
 	\item src/tsolvers/stpsolver/
 	\begin{itemize}
-		\item[] STPSolver.\{h|cpp\}\footnotemark[\value{footnote}]
+		\item[] STPSolver.\{h|cpp\}
 		\item[] STPEdgeGraph.\{h|cpp\}
 		\item[] STPMapper.\{h|cpp\}
 		\item[] STPModel.\{h|cpp\}
 		\item[] STPStore.\{h|cpp\}
 	\end{itemize}
-	\item test/unit/test\_STPSolver.cpp\footnotemark[\value{footnote}]
+	\item test/unit/test\_STPSolver.cpp
 \end{itemize}
-\footnotetext{Na vytvoření/úpravě souboru se mimo autora práce podílel též Mgr.~Martin Blicha}
+Za účelem zapojení řešiče do zbytku frameworku jsme pak ve spolupráci s~vývojáři OpenSMT editovali soubory
+\begin{itemize}
+	\tt
+	\item src/api/Interpret.cc
+	\item src/logics/IDLTheory.cc
+	\item src/logics/Theory.h
+	\item src/tsolvers/IDLTHandler.\{h|cc\}
+\end{itemize}
 
 \section{Ukázkový příklad vstupu řešiče}\label{priklad}
 
