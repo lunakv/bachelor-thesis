@@ -3,7 +3,7 @@ Abychom mohli přistoupit k~popisu našeho řešení, musíme nejprve definovat 
 
 \section{Satisfiability Modulo Theories}
 
-Problém splnitelnosti booleovské formule, označovaný též zkratkou SAT, patří k~nejznámějším problémům z~oboru matematické logiky. V~roce 1971 se stal prvním dokazatelně NP-úplným problémem \cite{Cook71} a~v~důsledku toho i~užitečným nástrojem pro teorii složitosti, pomocí něhož lze rozhodovat o~NP-úplnosti dalších problémů.\footnote{Příklady převodů NP-úplných problémů na SAT můžeme nalézt např. v~\cite[kapitola 19]{Mares17}}
+Problém splnitelnosti booleovské formule, označovaný též zkratkou SAT, patří k~nejznámějším problémům z~oboru matematické logiky. V~roce 1971 se stal prvním dokazatelně NP-úplným problémem~\cite{Cook71} a~v~důsledku toho i~užitečným nástrojem pro teorii složitosti, pomocí něhož lze rozhodovat o~NP-úplnosti dalších problémů.\footnote{Příklady převodů NP-úplných problémů na SAT můžeme nalézt např. v~\cite[kapitola 19]{Mares17}}
 
 Přestože je SAT v~praxi často používaný, v~některých doménách může narážet na limitace svých vyjadřovacích schopností. Práce s~booleovskými proměnnými, omezenými pouze na dvě různé hodnoty, může komplikovat převod reálného problému do tvaru booleovské formule. Potřeba užití komplexnějších atomů tak vedla ke zobecnění SAT zvanému \emph{Satisfiability modulo theories} (SMT).
 
@@ -13,7 +13,7 @@ Jako příklady teorií tradičně řešených v~SMT lze uvézt teorii lineárn�
 
 \section{Simple Temporal Problem}\label{stp}
 
-Jedním ze základních podproblémů vyskytujícím se v~takřka všech plánovacích problémech je takzvaný \emph{Simple Temporal Problem} (STP). STP poprvé postulovali v~roce 1991 Dechter, Meiri a~Pearl \cite{Dechter91} a~od té doby našel široká využití jak v~informatických oblastech, tak v~oborech od medicíny \cite{Anselma06} po vesmírný let \cite{Fukunaga97}.
+Jedním ze základních podproblémů vyskytujícím se v~takřka všech plánovacích problémech je takzvaný \emph{Simple Temporal Problem} (STP). STP poprvé postulovali v~roce 1991 Dechter, Meiri a~Pearl~\cite{Dechter91} a~od té doby našel široká využití jak v~informatických oblastech, tak v~oborech od medicíny~\cite{Anselma06} po vesmírný let~\cite{Fukunaga97}.
 
 Vstupem STP je množina rozdílových omezení, to jest nerovnic tvaru
 \begin{equation}\label{eq:diff}

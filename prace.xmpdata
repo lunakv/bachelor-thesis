@@ -3,5 +3,5 @@
 \Author{Václav Luňák}
 \Title{STP řešič pro OpenSMT}
 \Keywords{SMT\sep OpenSMT\sep STP\sep diferenční logika\sep DPLL(T)}
-\Subject{Abstrakt práce}
+\Subject{Simple Temporal Problem je jedním z nejdůležitějších plánovacích problémů. V kontextu formální verifikace úzce souvisí s problémem SMT, kde na něj narazíme při řešení teorie diferenční logiky. V této práci se věnujeme doplnění řešiče pro diferenční logiku do vyvíjejícího se testovacího frameworku OpenSMT. Zkoumáme existující postupy pro řešení problému a porovnáváme je s ohledem na možnost jejich využití v kontextu OpenSMT. Detailně rozebíráme algoritmus založený na vyčerpávající propagaci teorie a na jeho bázi navrhujeme a vytváříme efektivní implementaci řešiče. Tuto implementaci následně testujeme a srovnáváme s ostatními současnými SMT řešiči a ukazujeme tak její srovnatelnou výkonnost.}
 \Publisher{Univerzita Karlova}
