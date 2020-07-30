@@ -630,7 +630,8 @@ FUNCTION {inbook}
   new.block
   format.btitle "title" output.check
   crossref missing$
-    { format.bvolume output
+    { format.in.ed.booktitle "booktitle" output.check
+      format.bvolume output
       format.chapter.pages "chapter and pages" output.check
       new.block
       format.number.series output

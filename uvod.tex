@@ -11,7 +11,9 @@ Na strojích $s_1 \dots s_n$ potřebujeme provést celkem $m$ úkolů. Každý �
 \end{minipage}
 \end{center}
 
-Příklad převodu takového zadání do tvaru rozdílových omezení ukazuje obrázek \ref{fig:job}. Jistě není těžké představit si reálná využití pro řešení takového problému. Jak si ale můžeme všimnout, už se nejedná o~běžný STP --- v~problému se navíc objevují disjunkce omezení. Naše podmínky obecně odpovídají výrokové formuli (v~konjunktivní normální formě), jejíž atomy jsou rozdílová omezení. Problém splnitelnosti takovýchto formulí se obecně nazývá \emph{satisfiability modulo theories} (SMT) a~je důležitým předmětem zkoumání v~oboru formální verifikace~\cite{SMT}. Přestože je tento problém obecně složitější než STP, ukážeme si, že jeho rozhodnutí jsme stále schopni dosáhnout vhodným využitím postupů na řešení STP.
+Příklad převodu takového zadání do tvaru rozdílových omezení ukazuje obrázek \ref{fig:job}. První druh nerovnic zajišťuje smysluplný počátek pro všechny operace. Nerovnice druhého typu určují následnost operací v~jednotlivých úkolech a podmínky třetího typu označují fakt, že na jednom stroji může v~jednu chvíli probíhat nejvýše jedna operace. Chceme-li navíc operace dokončit před časem $T$, musíme je začít s dostatečným předstihem, což vyjadřuje poslední druh nerovnic. 
+
+Jistě není těžké představit si reálná využití pro řešení takového problému. Jak si ale můžeme všimnout, už se nejedná o~běžný STP --- v~problému se navíc objevují disjunkce omezení. Naše podmínky obecně odpovídají výrokové formuli (v~konjunktivní normální formě), jejíž atomy jsou rozdílová omezení. Problém splnitelnosti takovýchto formulí se obecně nazývá \emph{satisfiability modulo theories} (SMT) a~je důležitým předmětem zkoumání v~oboru formální verifikace~\cite{SMT}. Přestože je tento problém obecně složitější než STP, ukážeme si, že jeho rozhodnutí jsme stále schopni dosáhnout vhodným využitím postupů na řešení STP.
 
 \begin{figure}[b]
 	\centering
@@ -19,5 +21,5 @@ Příklad převodu takového zadání do tvaru rozdílových omezení ukazuje ob
 	\caption{Příklad převodu plánovacího problému do rozdílových omezení} 
 	\label{fig:job}
 \end{figure}
-
-Cílem této práce je vytvoření STP řešiče pro verifikační framework OpenSMT~\cite{OpenSMT}. Nejprve si přiblížíme některé základní principy z~oblasti SMT řešičů. Následně analyzujeme existující postupy pro řešení STP v~kontextu SMT a~navrhneme podle nich konkrétní algoritmus pro zapojení do OpenSMT. Navržený algoritmus následně implementujeme. Jako součást práce také naši implementaci otestujeme na rozsáhlé sadě problémů a~srovnáme její účinnost s~existujícími SMT řešiči.
+\newpage
+Cílem této práce je vytvoření STP řešiče pro SMT řešič OpenSMT~\cite{OpenSMT}. Nejprve si přiblížíme některé základní principy z~oblasti SMT řešičů. Následně analyzujeme existující postupy pro řešení STP v~kontextu SMT a~navrhneme podle nich konkrétní algoritmus pro zapojení do OpenSMT. Navržený algoritmus následně implementujeme. Jako součást práce také naši implementaci otestujeme na rozsáhlé sadě problémů a~srovnáme její účinnost s~existujícími SMT řešiči.
